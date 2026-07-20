@@ -34,3 +34,14 @@ $string['role_evaluationofficer'] = 'Evaluation officer';
 $string['role_evaluationofficer_desc'] = 'Can request evaluations in THL EvaSys.';
 $string['role_evaluationadmin'] = 'Evaluation admin';
 $string['role_evaluationadmin_desc'] = 'Can edit global THL EvaSys plugin settings.';
+
+// Settings.
+$string['settings'] = 'THL EvaSys settings';
+$string['requestperiod'] = 'Evaluation request period';
+$string['requestperiod_desc'] = 'Define the period during which evaluations may be requested.';
+$string['requestperiod_from'] = 'Request period from';
+$string['requestperiod_from_desc'] = 'First day of the evaluation request period (inclusive).';
+$string['requestperiod_to'] = 'Request period until';
+$string['requestperiod_to_desc'] = 'Last day of the evaluation request period (inclusive).';
+$string['error_invaliddate'] = 'Please enter a valid date.';
+$string['error_requestperiodorder'] = 'The end of the request period must not be before the start.';

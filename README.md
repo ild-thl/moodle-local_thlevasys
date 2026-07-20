@@ -34,12 +34,27 @@ Die Capabilities werden **keiner** Standard-Moodle-Rolle zugeordnet (`archetypes
 
 Zuweisungen erfolgen manuell über die Moodle-Rollenverwaltung. Rollen werden beim Deinstallieren des Plugins nicht automatisch entfernt.
 
+## Einstellungen
+
+Pfad für Site-Admins: **Website-Administration → Plugins → Lokale Plugins → THL-EvaSys-Einstellungen**
+
+Evaluations-Admins ohne `moodle/site:config` erreichen dieselbe Seite über die Website-Administration (Eintrag auf Root-Ebene).
+
+| Einstellung | Config-Key | Beschreibung |
+| --- | --- | --- |
+| Beantragungszeitraum von | `local_thlevasys/requestperiod_from` | Erster Tag (Unix-Timestamp, Tagesbeginn) |
+| Beantragungszeitraum bis | `local_thlevasys/requestperiod_to` | Letzter Tag inklusive (Unix-Timestamp, Tagesende) |
+
+Zugriff erfordert `local/thlevasys:managesettings`. Werte lesen: `get_config('local_thlevasys', 'requestperiod_from')`.
+
 ## Verzeichnisstruktur
 
 ```text
 local/thlevasys/
 ├── version.php
+├── settings.php
 ├── classes/
+│   ├── admin_setting_configdate.php
 │   ├── privacy/
 │   │   └── provider.php
 │   └── setup.php
@@ -62,6 +77,7 @@ Das Plugin speichert derzeit keine personenbezogenen Daten und implementiert die
 ## Entwicklung
 
 - Moodle Developer Resources: [Local plugins](https://moodledev.io/docs/4.5/apis/plugintypes/local)
+- Admin settings: [Admin settings](https://moodledev.io/docs/4.5/apis/subsystems/admin)
 - Access API: [Capabilities](https://moodledev.io/docs/4.5/apis/subsystems/access)
 - Common files: [version.php](https://moodledev.io/docs/4.5/apis/commonfiles/version.php), [Privacy API](https://moodledev.io/docs/4.5/apis/subsystems/privacy)
 

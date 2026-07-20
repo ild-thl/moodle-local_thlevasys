@@ -34,3 +34,14 @@ $string['role_evaluationofficer'] = 'Evaluationsbeauftragte*r';
 $string['role_evaluationofficer_desc'] = 'Kann Evaluationen in THL EvaSys beantragen.';
 $string['role_evaluationadmin'] = 'Evaluations-Admin';
 $string['role_evaluationadmin_desc'] = 'Kann globale Plugin-Einstellungen von THL EvaSys bearbeiten.';
+
+// Settings.
+$string['settings'] = 'THL-EvaSys-Einstellungen';
+$string['requestperiod'] = 'Beantragungszeitraum für Evaluationen';
+$string['requestperiod_desc'] = 'Zeitraum, in dem Evaluationen beantragt werden dürfen.';
+$string['requestperiod_from'] = 'Beantragungszeitraum von';
+$string['requestperiod_from_desc'] = 'Erster Tag des Beantragungszeitraums (einschließlich).';
+$string['requestperiod_to'] = 'Beantragungszeitraum bis';
+$string['requestperiod_to_desc'] = 'Letzter Tag des Beantragungszeitraums (einschließlich).';
+$string['error_invaliddate'] = 'Bitte ein gültiges Datum eingeben.';
+$string['error_requestperiodorder'] = 'Das Ende des Beantragungszeitraums darf nicht vor dem Beginn liegen.';
