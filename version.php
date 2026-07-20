@@ -1,0 +1,35 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Version metadata for the local_thlevasys plugin.
+ *
+ * @package   local_thlevasys
+ * @copyright 2026 Jan Rieger <jan.rieger@th-luebeck.de>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+$plugin->version   = 2026072002;
+$plugin->requires  = 2024100700.00; // Moodle 4.5.
+$plugin->supported = [
+    405, // Moodle 4.5 (inclusive lowest).
+    502, // Moodle 5.2 (inclusive highest; covers 5.0 and 5.1).
+];
+$plugin->component = 'local_thlevasys';
+$plugin->maturity  = MATURITY_ALPHA;
+$plugin->release   = '0.1.0';
