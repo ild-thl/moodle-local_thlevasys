@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version metadata for the local_thlevasys plugin.
+ * Hook callback registration for local_thlevasys.
  *
  * @package   local_thlevasys
  * @copyright 2026 Jan Rieger <jan.rieger@th-luebeck.de>
@@ -24,12 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2026072102;
-$plugin->requires  = 2024100700.00; // Moodle 4.5.
-$plugin->supported = [
-    405, // Moodle 4.5 (inclusive lowest).
-    502, // Moodle 5.2 (inclusive highest; covers 5.0 and 5.1).
+$callbacks = [
+    [
+        'hook' => \core\hook\navigation\primary_extend::class,
+        'callback' => [\local_thlevasys\hook_callbacks::class, 'extend_primary_navigation'],
+    ],
 ];
-$plugin->component = 'local_thlevasys';
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '0.1.0';

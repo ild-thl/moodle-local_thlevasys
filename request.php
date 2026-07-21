@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Request an evaluation for a course.
+ * Central page to request evaluations.
  *
  * @package    local_thlevasys
  * @copyright  2026 Jan Rieger <jan.rieger@th-luebeck.de>
@@ -24,26 +24,28 @@
 
 require_once(__DIR__ . '/../../config.php');
 
-$courseid = required_param('id', PARAM_INT);
+require_login();
 
-$course = get_course($courseid);
-require_login($course);
-
-$coursecontext = context_course::instance($courseid);
-
-if (!\local_thlevasys\access::can_request_evaluation($courseid)) {
+if (!\local_thlevasys\access::can_view_request_navigation()) {
     throw new moodle_exception('error_requestnotavailable', 'local_thlevasys');
 }
 
 $pagetitle = get_string('requestevaluation', 'local_thlevasys');
-$url = new moodle_url('/local/thlevasys/request.php', ['id' => $courseid]);
+$url = new moodle_url('/local/thlevasys/request.php');
 
 $PAGE->set_url($url);
-$PAGE->set_context($coursecontext);
-$PAGE->set_pagelayout('incourse');
+$PAGE->set_context(context_system::instance());
+$PAGE->set_pagelayout('standard');
 $PAGE->set_title($pagetitle);
-$PAGE->set_heading(format_string($course->fullname));
+$PAGE->set_heading($pagetitle);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($pagetitle);
+
+if (!\local_thlevasys\access::can_submit_request_now()) {
+    echo $OUTPUT->notification(get_string('error_outside_requestperiod', 'local_thlevasys'), 'warning');
+    echo $OUTPUT->footer();
+    exit;
+}
+
 echo $OUTPUT->footer();

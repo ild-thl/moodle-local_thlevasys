@@ -48,4 +48,5 @@ $string['error_requestperiodorder'] = 'The end of the request period must not be
 
 // Evaluation request page.
 $string['requestevaluation'] = 'Request evaluation';
-$string['error_requestnotavailable'] = 'An evaluation cannot be requested at this time. Check the request period and your permissions.';
+$string['error_requestnotavailable'] = 'You do not have permission to request evaluations.';
+$string['error_outside_requestperiod'] = 'Evaluations cannot be requested at the moment because the request period is not active.';

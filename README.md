@@ -34,24 +34,22 @@ Die Capabilities werden **keiner** Standard-Moodle-Rolle zugeordnet (`archetypes
 
 Zuweisungen erfolgen manuell über die Moodle-Rollenverwaltung. Rollen werden beim Deinstallieren des Plugins nicht automatisch entfernt.
 
-## Evaluation beantragen (Kursseite)
+## Evaluation beantragen (zentrale Seite)
 
-Eingeschriebene Nutzer mit `local/thlevasys:requestevaluation` im **Kursbereich-Kontext** des Kurses sehen im Kurs unter **Mehr** den Eintrag „Evaluation beantragen“ — **nur innerhalb des konfigurierten Beantragungszeitraums**.
+Nutzer mit der Rolle **Evaluationsbeauftragte\*r** oder **Evaluations-Admin** sehen in der **Primärnavigation** den Eintrag „Evaluation beantragen“ (unabhängig vom Beantragungszeitraum).
 
-- URL: `/local/thlevasys/request.php?id={courseid}`
-- Zugriff: aktive Einschreibung im Kurs + Capability im Kursbereich + aktueller Zeitpunkt innerhalb von `requestperiod_from` / `requestperiod_to`
-- Ist kein Zeitraum gesetzt oder liegt die aktuelle Zeit außerhalb, erscheint der Menüpunkt nicht; ein direkter Aufruf der URL wird abgewiesen.
+- URL: `/local/thlevasys/request.php`
+- Sichtbarkeit des Links: Rollen-Zuweisung als Evaluationsbeauftragte\*r oder Evaluations-Admin
+- Außerhalb des Beantragungszeitraums: Evaluationsbeauftragte\*r sehen auf der Seite eine Hinweis-Meldung; Evaluations-Admins dürfen die Seite weiterhin nutzen
+- Umsetzung: Hook `\core\hook\navigation\primary_extend` in `db/hooks.php`
 
-### Rolle im Kursbereich zuweisen
+### Rolle Evaluationsbeauftragte\*r zuweisen
 
-Damit Evaluationen in einem Kurs über **Mehr** beantragt werden können, muss die Rolle **Evaluationsbeauftragte\*r** (`thlevasys_evaluationofficer`) im **Kursbereich** zugewiesen werden, zu dem der Kurs gehört — nicht im Kurs selbst.
+1. Website-Administration → Kurse → Kurse und Kursbereiche verwalten
+2. Kontextmenü des gewünschten Kursbereichs → Rechte → Rollen zuweisen
+3. Rolle **Evaluationsbeauftragte\*r** auswählen und den Nutzer zuweisen
 
-1. Website-Administration → Kurse → Kurse und Kursbereiche verwalten → Rollen zuweisen
-2. Kontextmenü des gewünschten Kursbereichs über die drei Punkte hinter dem Namen öffnen → Rechte
-3. Im Dropdown "Rollen zuweisen" auswählen.
-4. Rolle **Evaluationsbeauftragte\*r** auswählen und den Nutzer zuweisen.
-
-Die Capability `local/thlevasys:requestevaluation` gilt damit für alle Kurse in diesem Kursbereich. Zusätzlich muss der Nutzer im jeweiligen Kurs **eingeschrieben** sein, um den Menüpunkt zu sehen.
+Die Capability `local/thlevasys:requestevaluation` gilt damit im jeweiligen Kursbereich.
 
 ## Einstellungen
 
@@ -71,17 +69,18 @@ Zugriff erfordert `local/thlevasys:managesettings`. Werte lesen: `get_config('lo
 ```text
 local/thlevasys/
 ├── version.php
-├── lib.php
 ├── request.php
 ├── settings.php
 ├── classes/
 │   ├── access.php
 │   ├── admin_setting_configdate.php
+│   ├── hook_callbacks.php
 │   ├── privacy/
 │   │   └── provider.php
 │   └── setup.php
 ├── db/
 │   ├── access.php
+│   ├── hooks.php
 │   ├── install.php
 │   └── upgrade.php
 ├── lang/
@@ -99,6 +98,7 @@ Das Plugin speichert derzeit keine personenbezogenen Daten und implementiert die
 ## Entwicklung
 
 - Moodle Developer Resources: [Local plugins](https://moodledev.io/docs/4.5/apis/plugintypes/local)
+- Hooks API: [Hooks](https://moodledev.io/docs/4.5/apis/core/hooks) (`primary_extend`)
 - Admin settings: [Admin settings](https://moodledev.io/docs/4.5/apis/subsystems/admin)
 - Access API: [Capabilities](https://moodledev.io/docs/4.5/apis/subsystems/access)
 - Common files: [version.php](https://moodledev.io/docs/4.5/apis/commonfiles/version.php), [Privacy API](https://moodledev.io/docs/4.5/apis/subsystems/privacy)

@@ -27,9 +27,41 @@ namespace local_thlevasys;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Capability, enrolment and period checks for evaluation requests.
+ * Role and period checks for evaluation requests.
  */
 class access {
+
+    /**
+     * Whether the user has the evaluation officer role (any context).
+     *
+     * @param int|null $userid User id or null for current user.
+     * @return bool
+     */
+    public static function is_evaluation_officer(?int $userid = null): bool {
+        return self::user_has_plugin_role(setup::ROLE_EVALUATIONOFFICER, $userid);
+    }
+
+    /**
+     * Whether the user has the evaluation admin role (any context).
+     *
+     * @param int|null $userid User id or null for current user.
+     * @return bool
+     */
+    public static function is_evaluation_admin(?int $userid = null): bool {
+        return self::user_has_plugin_role(setup::ROLE_EVALUATIONADMIN, $userid);
+    }
+
+    /**
+     * Whether the primary navigation entry / request page entry should be shown.
+     *
+     * Visible for evaluation officers and evaluation admins, independent of the request period.
+     *
+     * @param int|null $userid User id or null for current user.
+     * @return bool
+     */
+    public static function can_view_request_navigation(?int $userid = null): bool {
+        return self::is_evaluation_officer($userid) || self::is_evaluation_admin($userid);
+    }
 
     /**
      * Whether the current time is within the configured request period.
@@ -54,35 +86,45 @@ class access {
     }
 
     /**
-     * Whether a user may request an evaluation for the given course.
+     * Whether the user may use the request form right now.
      *
-     * Requires active enrolment, the requestevaluation capability in the course
-     * category context, and that the current time is within the request period.
+     * Evaluation admins may always proceed. Evaluation officers only within the request period.
      *
-     * @param int $courseid Course id.
      * @param int|null $userid User id or null for current user.
      * @return bool
      */
-    public static function can_request_evaluation(int $courseid, ?int $userid = null): bool {
-        global $USER;
-
-        if ($courseid == SITEID) {
+    public static function can_submit_request_now(?int $userid = null): bool {
+        if (!self::can_view_request_navigation($userid)) {
             return false;
         }
 
-        if (!self::is_within_request_period()) {
-            return false;
+        if (self::is_evaluation_admin($userid)) {
+            return true;
         }
+
+        return self::is_within_request_period();
+    }
+
+    /**
+     * Whether the given user has a plugin role assignment somewhere.
+     *
+     * @param string $shortname Role shortname.
+     * @param int|null $userid User id or null for current user.
+     * @return bool
+     */
+    protected static function user_has_plugin_role(string $shortname, ?int $userid = null): bool {
+        global $DB, $USER;
 
         $userid = $userid ?? $USER->id;
-        $coursecontext = \context_course::instance($courseid);
-        $course = get_course($courseid);
-        $categorycontext = \context_coursecat::instance($course->category);
-
-        if (!is_enrolled($coursecontext, $userid, '', true)) {
+        if (empty($userid) || isguestuser($userid)) {
             return false;
         }
 
-        return has_capability('local/thlevasys:requestevaluation', $categorycontext, $userid);
+        $roleid = $DB->get_field('role', 'id', ['shortname' => $shortname]);
+        if (!$roleid) {
+            return false;
+        }
+
+        return user_has_role_assignment($userid, $roleid, 0);
     }
 }
