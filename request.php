@@ -30,13 +30,10 @@ $course = get_course($courseid);
 require_login($course);
 
 $coursecontext = context_course::instance($courseid);
-$categorycontext = context_coursecat::instance($course->category);
 
-if (!is_enrolled($coursecontext, null, '', true)) {
-    throw new moodle_exception('nopermissions', 'error', '', get_string('requestevaluation', 'local_thlevasys'));
+if (!\local_thlevasys\access::can_request_evaluation($courseid)) {
+    throw new moodle_exception('error_requestnotavailable', 'local_thlevasys');
 }
-
-require_capability('local/thlevasys:requestevaluation', $categorycontext);
 
 $pagetitle = get_string('requestevaluation', 'local_thlevasys');
 $url = new moodle_url('/local/thlevasys/request.php', ['id' => $courseid]);

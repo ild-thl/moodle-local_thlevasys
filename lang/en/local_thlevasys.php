@@ -48,3 +48,4 @@ $string['error_requestperiodorder'] = 'The end of the request period must not be
 
 // Evaluation request page.
 $string['requestevaluation'] = 'Request evaluation';
+$string['error_requestnotavailable'] = 'An evaluation cannot be requested at this time. Check the request period and your permissions.';

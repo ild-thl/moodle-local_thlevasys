@@ -27,15 +27,37 @@ namespace local_thlevasys;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Capability and enrolment checks for evaluation requests.
+ * Capability, enrolment and period checks for evaluation requests.
  */
 class access {
 
     /**
+     * Whether the current time is within the configured request period.
+     *
+     * Both start and end must be configured. The period is inclusive
+     * (from day start through to day end as stored in settings).
+     *
+     * @param int|null $now Optional unix timestamp for testing; defaults to time().
+     * @return bool
+     */
+    public static function is_within_request_period(?int $now = null): bool {
+        $from = (int) get_config('local_thlevasys', 'requestperiod_from');
+        $to = (int) get_config('local_thlevasys', 'requestperiod_to');
+
+        if ($from <= 0 || $to <= 0) {
+            return false;
+        }
+
+        $now = $now ?? time();
+
+        return ($now >= $from && $now <= $to);
+    }
+
+    /**
      * Whether a user may request an evaluation for the given course.
      *
-     * Requires active enrolment in the course and the requestevaluation capability
-     * in the course category context of the course.
+     * Requires active enrolment, the requestevaluation capability in the course
+     * category context, and that the current time is within the request period.
      *
      * @param int $courseid Course id.
      * @param int|null $userid User id or null for current user.
@@ -45,6 +67,10 @@ class access {
         global $USER;
 
         if ($courseid == SITEID) {
+            return false;
+        }
+
+        if (!self::is_within_request_period()) {
             return false;
         }
 

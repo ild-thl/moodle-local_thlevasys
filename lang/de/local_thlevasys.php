@@ -48,3 +48,4 @@ $string['error_requestperiodorder'] = 'Das Ende des Beantragungszeitraums darf n
 
 // Evaluation request page.
 $string['requestevaluation'] = 'Evaluation beantragen';
+$string['error_requestnotavailable'] = 'Eine Evaluation kann derzeit nicht beantragt werden. Prüfen Sie den Beantragungszeitraum und Ihre Berechtigungen.';

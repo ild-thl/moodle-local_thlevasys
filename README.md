@@ -36,10 +36,11 @@ Zuweisungen erfolgen manuell über die Moodle-Rollenverwaltung. Rollen werden be
 
 ## Evaluation beantragen (Kursseite)
 
-Eingeschriebene Nutzer mit `local/thlevasys:requestevaluation` im **Kursbereich-Kontext** des Kurses sehen im Kurs unter **Mehr** den Eintrag „Evaluation beantragen“.
+Eingeschriebene Nutzer mit `local/thlevasys:requestevaluation` im **Kursbereich-Kontext** des Kurses sehen im Kurs unter **Mehr** den Eintrag „Evaluation beantragen“ — **nur innerhalb des konfigurierten Beantragungszeitraums**.
 
 - URL: `/local/thlevasys/request.php?id={courseid}`
-- Zugriff: aktive Einschreibung im Kurs + Capability im Kursbereich des Kurses
+- Zugriff: aktive Einschreibung im Kurs + Capability im Kursbereich + aktueller Zeitpunkt innerhalb von `requestperiod_from` / `requestperiod_to`
+- Ist kein Zeitraum gesetzt oder liegt die aktuelle Zeit außerhalb, erscheint der Menüpunkt nicht; ein direkter Aufruf der URL wird abgewiesen.
 
 ### Rolle im Kursbereich zuweisen
 
