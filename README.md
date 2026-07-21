@@ -88,8 +88,11 @@ local/thlevasys/
 │   │   └── local_thlevasys.php
 │   └── en/
 │       └── local_thlevasys.php
-└── README.md
+├── README.md
+└── CHANGELOG.md
 ```
+
+Hinweis: Die Versionshistorie steht in [CHANGELOG.md](CHANGELOG.md).
 
 ## Privacy
 
