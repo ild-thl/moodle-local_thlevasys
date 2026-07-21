@@ -34,6 +34,13 @@ Die Capabilities werden **keiner** Standard-Moodle-Rolle zugeordnet (`archetypes
 
 Zuweisungen erfolgen manuell über die Moodle-Rollenverwaltung. Rollen werden beim Deinstallieren des Plugins nicht automatisch entfernt.
 
+## Evaluation beantragen (Kursseite)
+
+Eingeschriebene Nutzer mit `local/thlevasys:requestevaluation` im **Kursbereich-Kontext** des Kurses sehen im Kurs unter **Mehr** den Eintrag „Evaluation beantragen“.
+
+- URL: `/local/thlevasys/request.php?id={courseid}`
+- Zugriff: aktive Einschreibung im Kurs + Capability im Kursbereich des Kurses
+
 ## Einstellungen
 
 Pfad für Site-Admins: **Website-Administration → Plugins → Lokale Plugins → THL-EvaSys-Einstellungen**
@@ -52,8 +59,11 @@ Zugriff erfordert `local/thlevasys:managesettings`. Werte lesen: `get_config('lo
 ```text
 local/thlevasys/
 ├── version.php
+├── lib.php
+├── request.php
 ├── settings.php
 ├── classes/
+│   ├── access.php
 │   ├── admin_setting_configdate.php
 │   ├── privacy/
 │   │   └── provider.php

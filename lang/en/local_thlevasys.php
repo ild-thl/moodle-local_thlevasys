@@ -45,3 +45,6 @@ $string['requestperiod_to'] = 'Request period until';
 $string['requestperiod_to_desc'] = 'Last day of the evaluation request period (inclusive).';
 $string['error_invaliddate'] = 'Please enter a valid date.';
 $string['error_requestperiodorder'] = 'The end of the request period must not be before the start.';
+
+// Evaluation request page.
+$string['requestevaluation'] = 'Request evaluation';
