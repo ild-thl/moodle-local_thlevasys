@@ -41,6 +41,17 @@ Eingeschriebene Nutzer mit `local/thlevasys:requestevaluation` im **Kursbereich-
 - URL: `/local/thlevasys/request.php?id={courseid}`
 - Zugriff: aktive Einschreibung im Kurs + Capability im Kursbereich des Kurses
 
+### Rolle im Kursbereich zuweisen
+
+Damit Evaluationen in einem Kurs über **Mehr** beantragt werden können, muss die Rolle **Evaluationsbeauftragte\*r** (`thlevasys_evaluationofficer`) im **Kursbereich** zugewiesen werden, zu dem der Kurs gehört — nicht im Kurs selbst.
+
+1. Website-Administration → Kurse → Kurse und Kursbereiche verwalten → Rollen zuweisen
+2. Kontextmenü des gewünschten Kursbereichs über die drei Punkte hinter dem Namen öffnen → Rechte
+3. Im Dropdown "Rollen zuweisen" auswählen.
+4. Rolle **Evaluationsbeauftragte\*r** auswählen und den Nutzer zuweisen.
+
+Die Capability `local/thlevasys:requestevaluation` gilt damit für alle Kurse in diesem Kursbereich. Zusätzlich muss der Nutzer im jeweiligen Kurs **eingeschrieben** sein, um den Menüpunkt zu sehen.
+
 ## Einstellungen
 
 Pfad für Site-Admins: **Website-Administration → Plugins → Lokale Plugins → THL-EvaSys-Einstellungen**
