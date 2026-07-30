@@ -57,4 +57,6 @@ if ($categoryid && !\local_thlevasys\request_helper::can_request_in_category($ca
 $table = new \local_thlevasys\output\request_table();
 echo $table->render($categoryid);
 
+$PAGE->requires->js_call_amd('local_thlevasys/toggle_request', 'init');
+
 echo $OUTPUT->footer();

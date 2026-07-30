@@ -5,6 +5,20 @@ Alle wesentlichen Änderungen an `local_thlevasys` werden in dieser Datei festge
 Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 Versionierung: Plugin-`release` sowie Moodle-`version` (`YYYYMMDDXX`).
 
+## [0.3.0] - 2026-07-30
+
+Plugin-Version: `2026073001` · Maturity: Alpha
+
+### Hinzugefügt
+
+- Datenbanktabelle `local_thlevasys_requests` für Evaluationsbeantragungen (courseid, editingteacher, groupid, lang, requestedby, timecreated)
+- Sofortiges Speichern bzw. Löschen beim Setzen/Entfernen der Auswahl-Checkbox (AJAX-Webservice)
+- Privacy-API für die gespeicherten Beantragungsdaten
+
+### Geändert
+
+- Bestehende Beantragungen werden in der Tabelle vorausgewählt (inkl. Gruppe und Sprache)
+
 ## [0.2.0] - 2026-07-30
 
 Plugin-Version: `2026073000` · Maturity: Alpha

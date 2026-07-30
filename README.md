@@ -18,7 +18,7 @@ Moodle-Plugin vom Typ `local` der Technischen Hochschule Lübeck zur Anbindung a
 1. Plugin-Verzeichnis nach `{moodleroot}/local/thlevasys` kopieren bzw. dort auschecken.
 2. Als Administrator unter **Website-Administration → Benachrichtigungen** die Installation bzw. das Upgrade ausführen.
 
-Bei Installation und Upgrade legt das Plugin die benötigten Capabilities und Rollen automatisch an (sofern die Rollen-Shortnames noch nicht existieren).
+Bei Installation und Upgrade legt das Plugin die benötigten Capabilities und Rollen automatisch an (sofern die Rollen-Shortnames noch nicht existieren). Ab Version 0.3.0 wird zudem die Tabelle `local_thlevasys_requests` angelegt.
 
 ## Capabilities und Rollen
 
@@ -59,6 +59,21 @@ Auf der Seite erscheint eine Tabelle mit allen Kursen, in deren Kursbereich der 
 
 **Filter:** Dropdown aller Kursbereiche mit `requestevaluation`. Bei Auswahl werden nur Kurse in diesem Bereich und seinen Unterbereichen angezeigt.
 
+**Auswahl speichern:** Beim Setzen der Checkbox wird sofort ein Datensatz in `local_thlevasys_requests` angelegt (AJAX). Beim Entfernen wird der Datensatz gelöscht. Änderungen an Gruppe/Sprache bei gesetzter Checkbox aktualisieren den Datensatz. Bestehende Beantragungen des aktuellen Nutzers werden vorausgewählt.
+
+### Datenbanktabelle `local_thlevasys_requests`
+
+| Spalte | Bedeutung |
+| --- | --- |
+| `courseid` | Kurs |
+| `editingteacher` | User-ID der Dozentin / des Dozenten |
+| `groupid` | Kursgruppe (`0` = keine) |
+| `lang` | Sprache (`de` / `en`) |
+| `requestedby` | User-ID der beantragenden Person |
+| `timecreated` | Zeitpunkt der Beantragung |
+
+Pro Kombination aus Kurs, Dozent\*in und Antragsteller\*in gibt es höchstens einen Datensatz.
+
 ### Rolle Evaluationsbeauftragte\*r zuweisen
 
 1. Website-Administration → Kurse → Kurse und Kursbereiche verwalten
@@ -87,11 +102,19 @@ local/thlevasys/
 ├── version.php
 ├── request.php
 ├── settings.php
+├── amd/
+│   ├── src/
+│   │   └── toggle_request.js
+│   └── build/
+│       └── toggle_request.min.js
 ├── classes/
 │   ├── access.php
 │   ├── admin_setting_configdate.php
 │   ├── hook_callbacks.php
 │   ├── request_helper.php
+│   ├── request_repository.php
+│   ├── external/
+│   │   └── toggle_request.php
 │   ├── output/
 │   │   └── request_table.php
 │   ├── privacy/
@@ -101,6 +124,8 @@ local/thlevasys/
 │   ├── access.php
 │   ├── hooks.php
 │   ├── install.php
+│   ├── install.xml
+│   ├── services.php
 │   └── upgrade.php
 ├── lang/
 │   ├── de/
@@ -115,7 +140,7 @@ Hinweis: Die Versionshistorie steht in [CHANGELOG.md](CHANGELOG.md).
 
 ## Privacy
 
-Das Plugin speichert derzeit keine personenbezogenen Daten und implementiert die Moodle Privacy API als `null_provider`.
+Das Plugin speichert Evaluationsbeantragungen in `local_thlevasys_requests` (Antragsteller\*in, Dozent\*in, Kurs, Gruppe, Sprache, Zeitpunkt) und implementiert die Moodle Privacy API entsprechend.
 
 ## Entwicklung
 
@@ -123,6 +148,7 @@ Das Plugin speichert derzeit keine personenbezogenen Daten und implementiert die
 - Hooks API: [Hooks](https://moodledev.io/docs/4.5/apis/core/hooks) (`primary_extend`)
 - Admin settings: [Admin settings](https://moodledev.io/docs/4.5/apis/subsystems/admin)
 - Access API: [Capabilities](https://moodledev.io/docs/4.5/apis/subsystems/access)
+- External functions: [External functions](https://moodledev.io/docs/4.5/apis/subsystems/external)
 - Common files: [version.php](https://moodledev.io/docs/4.5/apis/commonfiles/version.php), [Privacy API](https://moodledev.io/docs/4.5/apis/subsystems/privacy)
 
 Bei Änderungen an diesem Plugin die zur Zielversion passende Dokumentation unter `https://moodledev.io/docs/{4.5|5.0|5.1|5.2}/` verwenden.

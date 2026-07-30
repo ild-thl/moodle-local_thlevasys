@@ -23,7 +23,14 @@
  */
 
 $string['pluginname'] = 'THL EvaSys';
-$string['privacy:metadata'] = 'Das Plugin THL EvaSys speichert keine personenbezogenen Daten.';
+$string['privacy:metadata:local_thlevasys_requests'] = 'Speichert Beantragungen von Evaluationen.';
+$string['privacy:metadata:local_thlevasys_requests:courseid'] = 'Die ID des Kurses, für den eine Evaluation beantragt wurde.';
+$string['privacy:metadata:local_thlevasys_requests:editingteacher'] = 'Die ID der Dozentin bzw. des Dozenten, für die bzw. den die Evaluation beantragt wurde.';
+$string['privacy:metadata:local_thlevasys_requests:groupid'] = 'Die ID der Kursgruppe, falls eine ausgewählt wurde.';
+$string['privacy:metadata:local_thlevasys_requests:lang'] = 'Die gewählte Evaluationssprache.';
+$string['privacy:metadata:local_thlevasys_requests:requestedby'] = 'Die ID der Person, die die Evaluation beantragt hat.';
+$string['privacy:metadata:local_thlevasys_requests:timecreated'] = 'Der Zeitpunkt der Beantragung.';
+$string['privacy:path:requests'] = 'Evaluationsbeantragungen';
 
 // Capabilities.
 $string['thlevasys:requestevaluation'] = 'Evaluationen beantragen';

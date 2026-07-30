@@ -23,7 +23,14 @@
  */
 
 $string['pluginname'] = 'THL EvaSys';
-$string['privacy:metadata'] = 'The THL EvaSys plugin does not store any personal data.';
+$string['privacy:metadata:local_thlevasys_requests'] = 'Stores evaluation requests.';
+$string['privacy:metadata:local_thlevasys_requests:courseid'] = 'The ID of the course for which an evaluation was requested.';
+$string['privacy:metadata:local_thlevasys_requests:editingteacher'] = 'The ID of the editing teacher for whom the evaluation was requested.';
+$string['privacy:metadata:local_thlevasys_requests:groupid'] = 'The ID of the course group, if one was selected.';
+$string['privacy:metadata:local_thlevasys_requests:lang'] = 'The selected evaluation language.';
+$string['privacy:metadata:local_thlevasys_requests:requestedby'] = 'The ID of the user who submitted the request.';
+$string['privacy:metadata:local_thlevasys_requests:timecreated'] = 'The time when the request was created.';
+$string['privacy:path:requests'] = 'Evaluation requests';
 
 // Capabilities.
 $string['thlevasys:requestevaluation'] = 'Request evaluations';

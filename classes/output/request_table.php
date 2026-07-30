@@ -38,7 +38,7 @@ class request_table {
      * @return string HTML
      */
     public function render(int $filtercategoryid = 0): string {
-        global $OUTPUT;
+        global $OUTPUT, $USER;
 
         $categories = \local_thlevasys\request_helper::get_filter_categories();
         $html = '';
@@ -65,6 +65,8 @@ class request_table {
             return $html;
         }
 
+        $existing = \local_thlevasys\request_repository::get_requests_for_user((int) $USER->id);
+
         $table = new \html_table();
         $table->attributes['class'] = 'generaltable local-thlevasys-request-table';
         $table->id = 'local-thlevasys-request-table';
@@ -79,24 +81,12 @@ class request_table {
         ];
         $table->align = ['left', 'left', 'left', 'left', 'left', 'left', 'center'];
 
-        $sesskey = sesskey();
-        $html .= \html_writer::start_tag('form', [
-            'method' => 'post',
-            'action' => (new \moodle_url('/local/thlevasys/request.php'))->out(false),
-            'id' => 'local-thlevasys-request-form',
-        ]);
-        $html .= \html_writer::empty_tag('input', [
-            'type' => 'hidden',
-            'name' => 'sesskey',
-            'value' => $sesskey,
-        ]);
-        $html .= \html_writer::empty_tag('input', [
-            'type' => 'hidden',
-            'name' => 'categoryid',
-            'value' => $filtercategoryid,
-        ]);
-
         foreach ($rows as $row) {
+            $request = $existing[$row->rowkey] ?? null;
+            $selected = $request !== null;
+            $selectedgroupid = $request ? (int) $request->groupid : 0;
+            $selectedlang = $request ? $request->lang : 'de';
+
             if (empty($row->groups)) {
                 $groupselect = get_string('group_none', 'local_thlevasys');
             } else {
@@ -107,9 +97,13 @@ class request_table {
                 $groupselect = \html_writer::select(
                     $groupoptions,
                     'group[' . $row->rowkey . ']',
-                    0,
+                    $selectedgroupid,
                     false,
-                    ['id' => 'group_' . $row->rowkey, 'class' => 'form-select']
+                    [
+                        'id' => 'group_' . $row->rowkey,
+                        'class' => 'form-select local-thlevasys-group',
+                        'data-rowkey' => $row->rowkey,
+                    ]
                 );
             }
 
@@ -119,17 +113,27 @@ class request_table {
                     'en' => get_string('lang_en', 'local_thlevasys'),
                 ],
                 'language[' . $row->rowkey . ']',
-                'de',
+                $selectedlang,
                 false,
-                ['id' => 'language_' . $row->rowkey, 'class' => 'form-select']
+                [
+                    'id' => 'language_' . $row->rowkey,
+                    'class' => 'form-select local-thlevasys-language',
+                    'data-rowkey' => $row->rowkey,
+                ]
             );
 
             $checkbox = \html_writer::checkbox(
                 'selected[' . $row->rowkey . ']',
                 1,
-                false,
+                $selected,
                 '',
-                ['id' => 'selected_' . $row->rowkey, 'class' => 'form-check-input']
+                [
+                    'id' => 'selected_' . $row->rowkey,
+                    'class' => 'form-check-input local-thlevasys-select',
+                    'data-courseid' => $row->courseid,
+                    'data-editingteacher' => $row->teacherid,
+                    'data-rowkey' => $row->rowkey,
+                ]
             );
 
             $table->data[] = [
@@ -143,8 +147,9 @@ class request_table {
             ];
         }
 
-        $html .= \html_writer::table($table);
-        $html .= \html_writer::end_tag('form');
+        $html .= \html_writer::div(\html_writer::table($table), '', [
+            'data-region' => 'local-thlevasys-requests',
+        ]);
 
         return $html;
     }

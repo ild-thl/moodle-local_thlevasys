@@ -29,6 +29,10 @@
  * @return bool Always true.
  */
 function xmldb_local_thlevasys_upgrade($oldversion) {
+    global $DB;
+
+    $dbman = $DB->get_manager();
+
     if ($oldversion < 2026072001) {
         \local_thlevasys\setup::ensure_roles();
         upgrade_plugin_savepoint(true, 2026072001, 'local', 'thlevasys');
@@ -38,6 +42,31 @@ function xmldb_local_thlevasys_upgrade($oldversion) {
         // Move requestevaluation to coursecat context; refresh role context levels.
         \local_thlevasys\setup::ensure_roles();
         upgrade_plugin_savepoint(true, 2026072002, 'local', 'thlevasys');
+    }
+
+    if ($oldversion < 2026073001) {
+        $table = new xmldb_table('local_thlevasys_requests');
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
+        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null);
+        $table->add_field('editingteacher', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null);
+        $table->add_field('groupid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('lang', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null);
+        $table->add_field('requestedby', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('courseid', XMLDB_KEY_FOREIGN, ['courseid'], 'course', ['id']);
+        $table->add_key('editingteacher', XMLDB_KEY_FOREIGN, ['editingteacher'], 'user', ['id']);
+        $table->add_key('requestedby', XMLDB_KEY_FOREIGN, ['requestedby'], 'user', ['id']);
+
+        $table->add_index('course_teacher_requester', XMLDB_INDEX_UNIQUE, ['courseid', 'editingteacher', 'requestedby']);
+
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        upgrade_plugin_savepoint(true, 2026073001, 'local', 'thlevasys');
     }
 
     return true;
