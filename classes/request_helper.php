@@ -35,7 +35,7 @@ class request_helper {
      * Categories where the user has local/thlevasys:requestevaluation.
      *
      * @param int|null $userid User id or null for the current user.
-     * @return array Category id => formatted name (with indentation).
+     * @return array Category id => category name only (without parent path).
      */
     public static function get_filter_categories(?int $userid = null): array {
         global $USER;
@@ -43,12 +43,17 @@ class request_helper {
         $userid = $userid ?? $USER->id;
         $options = [];
 
-        $all = \core_course_category::make_categories_list();
-        foreach ($all as $categoryid => $name) {
+        // Keep the usual category tree order from make_categories_list().
+        foreach (\core_course_category::make_categories_list() as $categoryid => $unusedname) {
             $context = \context_coursecat::instance($categoryid);
-            if (has_capability('local/thlevasys:requestevaluation', $context, $userid)) {
-                $options[$categoryid] = $name;
+            if (!has_capability('local/thlevasys:requestevaluation', $context, $userid)) {
+                continue;
             }
+            $category = \core_course_category::get($categoryid, IGNORE_MISSING, true);
+            if (!$category) {
+                continue;
+            }
+            $options[$categoryid] = $category->get_formatted_name();
         }
 
         return $options;

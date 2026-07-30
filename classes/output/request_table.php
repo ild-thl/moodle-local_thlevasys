@@ -77,6 +77,7 @@ class request_table {
             get_string('col_language', 'local_thlevasys'),
             get_string('col_select', 'local_thlevasys'),
         ];
+        $table->align = ['left', 'left', 'left', 'left', 'left', 'left', 'center'];
 
         $sesskey = sesskey();
         $html .= \html_writer::start_tag('form', [
