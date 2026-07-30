@@ -43,6 +43,22 @@ Nutzer mit der Rolle **Evaluationsbeauftragte\*r** oder **Evaluations-Admin** se
 - Außerhalb des Beantragungszeitraums: Evaluationsbeauftragte\*r sehen auf der Seite eine Hinweis-Meldung; Evaluations-Admins dürfen die Seite weiterhin nutzen
 - Umsetzung: Hook `\core\hook\navigation\primary_extend` in `db/hooks.php`
 
+### Tabelle
+
+Auf der Seite erscheint eine Tabelle mit allen Kursen, in deren Kursbereich der Nutzer `local/thlevasys:requestevaluation` besitzt. Pro eingeschriebenem **editingteacher** gibt es eine Zeile.
+
+| Spalte | Inhalt |
+| --- | --- |
+| Kurs-ID | Moodle-Kurs-ID |
+| Kursname | Kursname |
+| Dozent\*in | Name des editingteacher |
+| Teilnehmer\*innen | Anzahl aktiv eingeschriebener Nutzer |
+| Gruppe | Dropdown der Kursgruppen (falls vorhanden) |
+| Sprache | Dropdown Deutsch / Englisch |
+| Auswahl | Checkbox zur Beantragung |
+
+**Filter:** Dropdown aller Kursbereiche mit `requestevaluation`. Bei Auswahl werden nur Kurse in diesem Bereich und seinen Unterbereichen angezeigt.
+
 ### Rolle Evaluationsbeauftragte\*r zuweisen
 
 1. Website-Administration → Kurse → Kurse und Kursbereiche verwalten
@@ -75,6 +91,9 @@ local/thlevasys/
 │   ├── access.php
 │   ├── admin_setting_configdate.php
 │   ├── hook_callbacks.php
+│   ├── request_helper.php
+│   ├── output/
+│   │   └── request_table.php
 │   ├── privacy/
 │   │   └── provider.php
 │   └── setup.php

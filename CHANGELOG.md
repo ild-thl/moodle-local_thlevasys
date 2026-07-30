@@ -5,6 +5,17 @@ Alle wesentlichen Änderungen an `local_thlevasys` werden in dieser Datei festge
 Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 Versionierung: Plugin-`release` sowie Moodle-`version` (`YYYYMMDDXX`).
 
+## [0.2.0] - 2026-07-30
+
+Plugin-Version: `2026073000` · Maturity: Alpha
+
+### Hinzugefügt
+
+- Beantragungstabelle auf `/local/thlevasys/request.php` mit Spalten Kurs-ID, Kursname, Dozent\*in, Teilnehmer\*innen, Gruppe, Sprache, Auswahl
+- Eine Tabellenzeile pro eingeschriebenem editingteacher in Kursen mit `requestevaluation` im Kursbereich
+- Kursbereichs-Filter (inkl. Unterbereiche)
+- Gruppen- und Sprach-Dropdowns sowie Auswahl-Checkboxen (Formular vorbereitet)
+
 ## [0.1.0] - 2026-07-21
 
 Plugin-Version: `2026072102` · Maturity: Alpha

@@ -30,8 +30,10 @@ if (!\local_thlevasys\access::can_view_request_navigation()) {
     throw new moodle_exception('error_requestnotavailable', 'local_thlevasys');
 }
 
+$categoryid = optional_param('categoryid', 0, PARAM_INT);
+
 $pagetitle = get_string('requestevaluation', 'local_thlevasys');
-$url = new moodle_url('/local/thlevasys/request.php');
+$url = new moodle_url('/local/thlevasys/request.php', $categoryid ? ['categoryid' => $categoryid] : []);
 
 $PAGE->set_url($url);
 $PAGE->set_context(context_system::instance());
@@ -47,5 +49,12 @@ if (!\local_thlevasys\access::can_submit_request_now()) {
     echo $OUTPUT->footer();
     exit;
 }
+
+if ($categoryid && !\local_thlevasys\request_helper::can_request_in_category($categoryid)) {
+    throw new moodle_exception('error_requestnotavailable', 'local_thlevasys');
+}
+
+$table = new \local_thlevasys\output\request_table();
+echo $table->render($categoryid);
 
 echo $OUTPUT->footer();
