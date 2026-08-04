@@ -12,6 +12,7 @@ Plugin-Version: `2026080405` · Maturity: Alpha
 ### Hinzugefügt
 
 - Sortierung der Beantragungstabelle nach allen Spalten (Moodle `flexible_table`, Standard: Kursname aufsteigend)
+- Paginierung der Beantragungstabelle (10 Einträge pro Seite)
 
 ## [0.3.5] - 2026-08-04
 

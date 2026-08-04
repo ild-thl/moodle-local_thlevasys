@@ -98,13 +98,14 @@ class request_table {
         $table->define_baseurl($baseurl);
         $table->sortable(true, 'coursename', SORT_ASC);
         $table->collapsible(false);
-        $table->pageable(false);
         $table->column_class('selected', 'text-center');
         $table->attributes['class'] = 'generaltable local-thlevasys-request-table';
         $table->attributes['id'] = 'local-thlevasys-request-table';
         $table->setup();
 
         $rows = $this->sort_rows($rows, $table->get_sort_columns());
+        $table->pagesize(10, count($rows));
+        $rows = array_slice($rows, $table->get_page_start(), $table->get_page_size());
 
         foreach ($rows as $row) {
             $table->add_data([
