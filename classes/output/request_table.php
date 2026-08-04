@@ -101,7 +101,7 @@ class request_table {
                     false,
                     [
                         'id' => 'group_' . $row->rowkey,
-                        'class' => 'form-select local-thlevasys-group',
+                        'class' => 'form-select form-select-sm local-thlevasys-group',
                         'data-rowkey' => $row->rowkey,
                     ]
                 );
@@ -109,31 +109,35 @@ class request_table {
 
             $languageselect = \html_writer::select(
                 [
-                    'de' => get_string('lang_de', 'local_thlevasys'),
-                    'en' => get_string('lang_en', 'local_thlevasys'),
+                    'de' => get_string('lang_de_short', 'local_thlevasys'),
+                    'en' => get_string('lang_en_short', 'local_thlevasys'),
                 ],
                 'language[' . $row->rowkey . ']',
                 $selectedlang,
                 false,
                 [
                     'id' => 'language_' . $row->rowkey,
-                    'class' => 'form-select local-thlevasys-language',
+                    'class' => 'form-select form-select-sm local-thlevasys-language',
                     'data-rowkey' => $row->rowkey,
+                    'title' => get_string('col_language', 'local_thlevasys'),
                 ]
             );
 
-            $checkbox = \html_writer::checkbox(
-                'selected[' . $row->rowkey . ']',
-                1,
-                $selected,
-                '',
-                [
-                    'id' => 'selected_' . $row->rowkey,
-                    'class' => 'form-check-input local-thlevasys-select',
-                    'data-courseid' => $row->courseid,
-                    'data-editingteacher' => $row->teacherid,
-                    'data-rowkey' => $row->rowkey,
-                ]
+            $checkbox = \html_writer::div(
+                \html_writer::checkbox(
+                    'selected[' . $row->rowkey . ']',
+                    1,
+                    $selected,
+                    '',
+                    [
+                        'id' => 'selected_' . $row->rowkey,
+                        'class' => 'form-check-input local-thlevasys-select',
+                        'data-courseid' => $row->courseid,
+                        'data-editingteacher' => $row->teacherid,
+                        'data-rowkey' => $row->rowkey,
+                    ]
+                ),
+                'form-check form-check-inline m-0'
             );
 
             $courselink = \html_writer::link(
@@ -156,7 +160,7 @@ class request_table {
             ];
         }
 
-        $html .= \html_writer::div(\html_writer::table($table), '', [
+        $html .= \html_writer::div(\html_writer::table($table), 'local-thlevasys-request-wrapper', [
             'data-region' => 'local-thlevasys-requests',
         ]);
 

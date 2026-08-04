@@ -70,3 +70,5 @@ $string['col_select'] = 'Select';
 $string['group_none'] = 'No group';
 $string['lang_de'] = 'German';
 $string['lang_en'] = 'English';
+$string['lang_de_short'] = 'DE';
+$string['lang_en_short'] = 'EN';

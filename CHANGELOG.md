@@ -5,6 +5,38 @@ Alle wesentlichen Änderungen an `local_thlevasys` werden in dieser Datei festge
 Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 Versionierung: Plugin-`release` sowie Moodle-`version` (`YYYYMMDDXX`).
 
+## [0.3.5] - 2026-08-04
+
+Plugin-Version: `2026080404` · Maturity: Alpha
+
+### Geändert
+
+- Beantragungstabelle kompakter (`table-layout: fixed`, kürzere Sprachkürzel DE/EN), damit sie ohne horizontalen Scrollbalken in den Inhaltsbereich passt
+
+## [0.3.4] - 2026-08-04
+
+Plugin-Version: `2026080403` · Maturity: Alpha
+
+### Behoben
+
+- Checkboxen in der Beantragungstabelle erschienen neben der Tabelle (`form-check-input` mit `position:absolute` ohne Wrapper)
+
+## [0.3.3] - 2026-08-04
+
+Plugin-Version: `2026080402` · Maturity: Alpha
+
+### Behoben
+
+- Beantragungstabelle: Checkboxen nicht mehr außerhalb der Zeilenhintergründe (Override von `.generaltable { width: 100% }`, Tabelle scrollt als Ganzes)
+
+## [0.3.2] - 2026-08-04
+
+Plugin-Version: `2026080401` · Maturity: Alpha
+
+### Behoben
+
+- Layout der Beantragungstabelle: Checkbox-Spalte blieb bei vielen Zeilen nicht mehr innerhalb der Tabelle (Select-Breiten begrenzt)
+
 ## [0.3.1] - 2026-08-04
 
 Plugin-Version: `2026080400` · Maturity: Alpha

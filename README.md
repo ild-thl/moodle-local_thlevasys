@@ -102,6 +102,7 @@ local/thlevasys/
 ├── version.php
 ├── request.php
 ├── settings.php
+├── styles.css
 ├── amd/
 │   ├── src/
 │   │   └── toggle_request.js
