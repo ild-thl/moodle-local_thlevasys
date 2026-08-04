@@ -50,8 +50,8 @@ Auf der Seite erscheint eine Tabelle mit allen Kursen, in deren Kursbereich der 
 | Spalte | Inhalt |
 | --- | --- |
 | Kurs-ID | Moodle-Kurs-ID |
-| Kursname | Kursname |
-| Dozent\*in | Name des editingteacher |
+| Kursname | Link zur Kursseite |
+| Dozent\*in | Link zum Nutzerprofil im Kurskontext |
 | Teilnehmer\*innen | Anzahl aktiv eingeschriebener Nutzer |
 | Gruppe | Dropdown der Kursgruppen (falls vorhanden) |
 | Sprache | Dropdown Deutsch / Englisch |

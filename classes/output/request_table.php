@@ -136,10 +136,19 @@ class request_table {
                 ]
             );
 
+            $courselink = \html_writer::link(
+                new \moodle_url('/course/view.php', ['id' => $row->courseid]),
+                $row->coursename
+            );
+            $teacherlink = \html_writer::link(
+                new \moodle_url('/user/view.php', ['id' => $row->teacherid, 'course' => $row->courseid]),
+                $row->teachername
+            );
+
             $table->data[] = [
                 $row->courseid,
-                $row->coursename,
-                $row->teachername,
+                $courselink,
+                $teacherlink,
                 $row->participantcount,
                 $groupselect,
                 $languageselect,

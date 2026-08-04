@@ -5,6 +5,14 @@ Alle wesentlichen Änderungen an `local_thlevasys` werden in dieser Datei festge
 Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 Versionierung: Plugin-`release` sowie Moodle-`version` (`YYYYMMDDXX`).
 
+## [0.3.1] - 2026-08-04
+
+Plugin-Version: `2026080400` · Maturity: Alpha
+
+### Geändert
+
+- Kursname und Dozent\*innen-Name in der Beantragungstabelle sind klickbar (Kursseite bzw. Nutzerprofil im Kurs)
+
 ## [0.3.0] - 2026-07-30
 
 Plugin-Version: `2026073001` · Maturity: Alpha
