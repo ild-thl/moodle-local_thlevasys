@@ -5,6 +5,14 @@ Alle wesentlichen Änderungen an `local_thlevasys` werden in dieser Datei festge
 Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 Versionierung: Plugin-`release` sowie Moodle-`version` (`YYYYMMDDXX`).
 
+## [0.3.6] - 2026-08-04
+
+Plugin-Version: `2026080405` · Maturity: Alpha
+
+### Hinzugefügt
+
+- Sortierung der Beantragungstabelle nach allen Spalten (Moodle `flexible_table`, Standard: Kursname aufsteigend)
+
 ## [0.3.5] - 2026-08-04
 
 Plugin-Version: `2026080404` · Maturity: Alpha

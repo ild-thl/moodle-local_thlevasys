@@ -26,8 +26,11 @@ namespace local_thlevasys\output;
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once($CFG->libdir . '/tablelib.php');
+
 /**
- * Renders filter and request table markup.
+ * Renders filter and sortable request table markup.
  */
 class request_table {
 
@@ -42,6 +45,11 @@ class request_table {
 
         $categories = \local_thlevasys\request_helper::get_filter_categories();
         $html = '';
+
+        $baseurl = new \moodle_url('/local/thlevasys/request.php');
+        if ($filtercategoryid) {
+            $baseurl->param('categoryid', $filtercategoryid);
+        }
 
         $filteroptions = [0 => get_string('filter_allcategories', 'local_thlevasys')] + $categories;
         if (!isset($filteroptions[$filtercategoryid])) {
@@ -66,11 +74,19 @@ class request_table {
         }
 
         $existing = \local_thlevasys\request_repository::get_requests_for_user((int) $USER->id);
+        $rows = $this->enrich_rows_for_sorting($rows, $existing);
 
-        $table = new \html_table();
-        $table->attributes['class'] = 'generaltable local-thlevasys-request-table';
-        $table->id = 'local-thlevasys-request-table';
-        $table->head = [
+        $table = new \flexible_table('local-thlevasys-requests');
+        $table->define_columns([
+            'courseid',
+            'coursename',
+            'teachername',
+            'participantcount',
+            'groupname',
+            'lang',
+            'selected',
+        ]);
+        $table->define_headers([
             get_string('col_courseid', 'local_thlevasys'),
             get_string('col_coursename', 'local_thlevasys'),
             get_string('col_teacher', 'local_thlevasys'),
@@ -78,92 +94,190 @@ class request_table {
             get_string('col_group', 'local_thlevasys'),
             get_string('col_language', 'local_thlevasys'),
             get_string('col_select', 'local_thlevasys'),
-        ];
-        $table->align = ['left', 'left', 'left', 'left', 'left', 'left', 'center'];
+        ]);
+        $table->define_baseurl($baseurl);
+        $table->sortable(true, 'coursename', SORT_ASC);
+        $table->collapsible(false);
+        $table->pageable(false);
+        $table->column_class('selected', 'text-center');
+        $table->attributes['class'] = 'generaltable local-thlevasys-request-table';
+        $table->attributes['id'] = 'local-thlevasys-request-table';
+        $table->setup();
+
+        $rows = $this->sort_rows($rows, $table->get_sort_columns());
 
         foreach ($rows as $row) {
-            $request = $existing[$row->rowkey] ?? null;
-            $selected = $request !== null;
-            $selectedgroupid = $request ? (int) $request->groupid : 0;
-            $selectedlang = $request ? $request->lang : 'de';
-
-            if (empty($row->groups)) {
-                $groupselect = get_string('group_none', 'local_thlevasys');
-            } else {
-                $groupoptions = [0 => get_string('group_none', 'local_thlevasys')];
-                foreach ($row->groups as $group) {
-                    $groupoptions[$group->id] = format_string($group->name);
-                }
-                $groupselect = \html_writer::select(
-                    $groupoptions,
-                    'group[' . $row->rowkey . ']',
-                    $selectedgroupid,
-                    false,
-                    [
-                        'id' => 'group_' . $row->rowkey,
-                        'class' => 'form-select form-select-sm local-thlevasys-group',
-                        'data-rowkey' => $row->rowkey,
-                    ]
-                );
-            }
-
-            $languageselect = \html_writer::select(
-                [
-                    'de' => get_string('lang_de_short', 'local_thlevasys'),
-                    'en' => get_string('lang_en_short', 'local_thlevasys'),
-                ],
-                'language[' . $row->rowkey . ']',
-                $selectedlang,
-                false,
-                [
-                    'id' => 'language_' . $row->rowkey,
-                    'class' => 'form-select form-select-sm local-thlevasys-language',
-                    'data-rowkey' => $row->rowkey,
-                    'title' => get_string('col_language', 'local_thlevasys'),
-                ]
-            );
-
-            $checkbox = \html_writer::div(
-                \html_writer::checkbox(
-                    'selected[' . $row->rowkey . ']',
-                    1,
-                    $selected,
-                    '',
-                    [
-                        'id' => 'selected_' . $row->rowkey,
-                        'class' => 'form-check-input local-thlevasys-select',
-                        'data-courseid' => $row->courseid,
-                        'data-editingteacher' => $row->teacherid,
-                        'data-rowkey' => $row->rowkey,
-                    ]
-                ),
-                'form-check form-check-inline m-0'
-            );
-
-            $courselink = \html_writer::link(
-                new \moodle_url('/course/view.php', ['id' => $row->courseid]),
-                $row->coursename
-            );
-            $teacherlink = \html_writer::link(
-                new \moodle_url('/user/view.php', ['id' => $row->teacherid, 'course' => $row->courseid]),
-                $row->teachername
-            );
-
-            $table->data[] = [
+            $table->add_data([
                 $row->courseid,
-                $courselink,
-                $teacherlink,
+                $this->render_course_link($row),
+                $this->render_teacher_link($row),
                 $row->participantcount,
-                $groupselect,
-                $languageselect,
-                $checkbox,
-            ];
+                $this->render_group_cell($row),
+                $this->render_language_cell($row),
+                $this->render_select_cell($row),
+            ]);
         }
 
-        $html .= \html_writer::div(\html_writer::table($table), 'local-thlevasys-request-wrapper', [
+        ob_start();
+        $table->finish_output();
+        $html .= \html_writer::div(ob_get_clean(), 'local-thlevasys-request-wrapper', [
             'data-region' => 'local-thlevasys-requests',
         ]);
 
         return $html;
+    }
+
+    /**
+     * Add sort fields from existing requests (group, language, selection).
+     *
+     * @param array $rows Table rows.
+     * @param array $existing Existing request records keyed by rowkey.
+     * @return array
+     */
+    protected function enrich_rows_for_sorting(array $rows, array $existing): array {
+        foreach ($rows as $row) {
+            $request = $existing[$row->rowkey] ?? null;
+            $row->selected = $request ? 1 : 0;
+            $row->lang = $request->lang ?? 'de';
+            $row->groupid = $request ? (int) $request->groupid : 0;
+
+            if ($row->groupid && !empty($row->groups[$row->groupid])) {
+                $row->groupname = format_string($row->groups[$row->groupid]->name);
+            } else {
+                $row->groupname = get_string('group_none', 'local_thlevasys');
+            }
+        }
+
+        return $rows;
+    }
+
+    /**
+     * Sort rows according to flexible_table sort columns.
+     *
+     * @param array $rows Rows to sort.
+     * @param array $sortcolumns Column => SORT_ASC|SORT_DESC.
+     * @return array
+     */
+    protected function sort_rows(array $rows, array $sortcolumns): array {
+        if (empty($rows) || empty($sortcolumns)) {
+            return $rows;
+        }
+
+        usort($rows, static function ($a, $b) use ($sortcolumns) {
+            foreach ($sortcolumns as $column => $order) {
+                $va = $a->{$column} ?? '';
+                $vb = $b->{$column} ?? '';
+
+                if (is_numeric($va) && is_numeric($vb)) {
+                    $cmp = (float) $va <=> (float) $vb;
+                } else {
+                    $cmp = strcoll(
+                        \core_text::strtolower((string) $va),
+                        \core_text::strtolower((string) $vb)
+                    );
+                }
+
+                if ($cmp !== 0) {
+                    return $order == SORT_DESC ? -$cmp : $cmp;
+                }
+            }
+            return 0;
+        });
+
+        return $rows;
+    }
+
+    /**
+     * @param \stdClass $row Table row.
+     * @return string
+     */
+    protected function render_course_link(\stdClass $row): string {
+        return \html_writer::link(
+            new \moodle_url('/course/view.php', ['id' => $row->courseid]),
+            $row->coursename
+        );
+    }
+
+    /**
+     * @param \stdClass $row Table row.
+     * @return string
+     */
+    protected function render_teacher_link(\stdClass $row): string {
+        return \html_writer::link(
+            new \moodle_url('/user/view.php', ['id' => $row->teacherid, 'course' => $row->courseid]),
+            $row->teachername
+        );
+    }
+
+    /**
+     * @param \stdClass $row Table row.
+     * @return string
+     */
+    protected function render_group_cell(\stdClass $row): string {
+        if (empty($row->groups)) {
+            return get_string('group_none', 'local_thlevasys');
+        }
+
+        $groupoptions = [0 => get_string('group_none', 'local_thlevasys')];
+        foreach ($row->groups as $group) {
+            $groupoptions[$group->id] = format_string($group->name);
+        }
+
+        return \html_writer::select(
+            $groupoptions,
+            'group[' . $row->rowkey . ']',
+            $row->groupid,
+            false,
+            [
+                'id' => 'group_' . $row->rowkey,
+                'class' => 'form-select form-select-sm local-thlevasys-group',
+                'data-rowkey' => $row->rowkey,
+            ]
+        );
+    }
+
+    /**
+     * @param \stdClass $row Table row.
+     * @return string
+     */
+    protected function render_language_cell(\stdClass $row): string {
+        return \html_writer::select(
+            [
+                'de' => get_string('lang_de_short', 'local_thlevasys'),
+                'en' => get_string('lang_en_short', 'local_thlevasys'),
+            ],
+            'language[' . $row->rowkey . ']',
+            $row->lang,
+            false,
+            [
+                'id' => 'language_' . $row->rowkey,
+                'class' => 'form-select form-select-sm local-thlevasys-language',
+                'data-rowkey' => $row->rowkey,
+                'title' => get_string('col_language', 'local_thlevasys'),
+            ]
+        );
+    }
+
+    /**
+     * @param \stdClass $row Table row.
+     * @return string
+     */
+    protected function render_select_cell(\stdClass $row): string {
+        return \html_writer::div(
+            \html_writer::checkbox(
+                'selected[' . $row->rowkey . ']',
+                1,
+                (bool) $row->selected,
+                '',
+                [
+                    'id' => 'selected_' . $row->rowkey,
+                    'class' => 'form-check-input local-thlevasys-select',
+                    'data-courseid' => $row->courseid,
+                    'data-editingteacher' => $row->teacherid,
+                    'data-rowkey' => $row->rowkey,
+                ]
+            ),
+            'form-check form-check-inline m-0'
+        );
     }
 }
