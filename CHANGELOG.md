@@ -13,6 +13,7 @@ Plugin-Version: `2026083100` · Maturity: Alpha
 
 - Eigene Übersichtsseite für Evaluations-Admins unter `/local/thlevasys/admin_requests.php`
 - Tabelle aller Beantragungen aller Evaluationsbeauftragten im konfigurierten Beantragungszeitraum (Sortierung, Paginierung)
+- Suchfeld zum Filtern des Tabelleninhalts in der Admin-Übersichtstabelle
 
 ### Geändert
 

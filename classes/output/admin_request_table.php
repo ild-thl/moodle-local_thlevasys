@@ -39,10 +39,11 @@ class admin_request_table {
      *
      * @return string HTML
      */
-    public function render(): string {
+    public function render(string $search = ''): string {
         global $OUTPUT;
 
         $html = '';
+        $search = trim($search);
         $bounds = \local_thlevasys\access::get_request_period_bounds();
         if ($bounds === null) {
             $html .= $OUTPUT->notification(get_string('error_requestperiodnotconfigured', 'local_thlevasys'), 'warning');
@@ -62,12 +63,33 @@ class admin_request_table {
         );
 
         $rows = \local_thlevasys\request_helper::get_admin_table_rows();
-        if (empty($rows)) {
+        if (empty($rows) && $search === '') {
             $html .= $OUTPUT->notification(get_string('admin_requesttable_empty', 'local_thlevasys'), 'info');
             return $html;
         }
 
         $baseurl = new \moodle_url('/local/thlevasys/admin_requests.php');
+        if ($search !== '') {
+            $baseurl->param('search', $search);
+        }
+
+        $html .= table_search::render($baseurl, $search);
+
+        $rows = \local_thlevasys\request_helper::filter_table_rows_by_search($rows, $search, [
+            'courseid',
+            'coursename',
+            'teachername',
+            'participantcount',
+            'groupname',
+            'langlabel',
+            'requestername',
+            'timecreatedlabel',
+        ]);
+
+        if (empty($rows)) {
+            $html .= $OUTPUT->notification(get_string('requesttable_search_empty', 'local_thlevasys'), 'info');
+            return $html;
+        }
 
         $table = new \flexible_table('local-thlevasys-admin-requests');
         $table->define_columns([

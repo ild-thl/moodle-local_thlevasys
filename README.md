@@ -96,7 +96,7 @@ Unter `/local/thlevasys/admin_requests.php` sieht der Evaluations-Admin alle Bea
 | Beantragt von | Link zum Nutzerprofil der Antragsteller\*in |
 | Beantragt am | Zeitpunkt der Beantragung |
 
-Sortierung nach allen Spalten (Standard: Beantragt am absteigend), Paginierung mit 10 Einträgen pro Seite.
+Sortierung nach allen Spalten (Standard: Beantragt am absteigend), Paginierung mit 10 Einträgen pro Seite, Suchfeld zum Filtern des Tabelleninhalts.
 
 ### Rolle Evaluationsbeauftragte\*r zuweisen
 
@@ -143,7 +143,8 @@ local/thlevasys/
 │   │   └── toggle_request.php
 │   ├── output/
 │   │   ├── request_table.php
-│   │   └── admin_request_table.php
+│   │   ├── admin_request_table.php
+│   │   └── table_search.php
 │   ├── privacy/
 │   │   └── provider.php
 │   └── setup.php

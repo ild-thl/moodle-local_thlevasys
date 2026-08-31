@@ -224,6 +224,33 @@ class request_helper {
     }
 
     /**
+     * Filter rows where any of the given fields contains the search term.
+     *
+     * @param array $rows Rows to filter.
+     * @param string $search Search term.
+     * @param string[] $fields Row property names to search in.
+     * @return array
+     */
+    public static function filter_table_rows_by_search(array $rows, string $search, array $fields): array {
+        $search = trim($search);
+        if ($search === '' || empty($rows)) {
+            return $rows;
+        }
+
+        $needle = \core_text::strtolower($search);
+
+        return array_values(array_filter($rows, static function ($row) use ($fields, $needle) {
+            foreach ($fields as $field) {
+                $value = \core_text::strtolower((string) ($row->{$field} ?? ''));
+                if ($value !== '' && strpos($value, $needle) !== false) {
+                    return true;
+                }
+            }
+            return false;
+        }));
+    }
+
+    /**
      * Sort table rows according to flexible_table sort columns.
      *
      * @param array $rows Rows to sort.

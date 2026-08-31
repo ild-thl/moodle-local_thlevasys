@@ -30,8 +30,13 @@ if (!\local_thlevasys\access::is_evaluation_admin()) {
     throw new moodle_exception('error_requestnotavailable', 'local_thlevasys');
 }
 
+$search = optional_param('search', '', PARAM_RAW_TRIMMED);
+
 $pagetitle = get_string('admin_requestoverview', 'local_thlevasys');
 $url = new moodle_url('/local/thlevasys/admin_requests.php');
+if ($search !== '') {
+    $url->param('search', $search);
+}
 
 $PAGE->set_url($url);
 $PAGE->set_context(context_system::instance());
@@ -43,6 +48,6 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading($pagetitle);
 
 $table = new \local_thlevasys\output\admin_request_table();
-echo $table->render();
+echo $table->render($search);
 
 echo $OUTPUT->footer();
