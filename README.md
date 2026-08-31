@@ -98,6 +98,8 @@ Unter `/local/thlevasys/admin_requests.php` sieht der Evaluations-Admin alle Bea
 
 Sortierung nach allen Spalten (Standard: Beantragt am absteigend), Paginierung mit 10 Einträgen pro Seite, Suchfeld zum Filtern des Tabelleninhalts.
 
+Oberhalb der Tabelle stehen Export-Einstellungsfelder (Evaluations-Beginn, Evaluations-Erinnerung, Evaluations-Ende, Semester, Fragebogen DE/EN). Die Felder werden nicht gespeichert; ein XML-Export-Button folgt später.
+
 ### Rolle Evaluationsbeauftragte\*r zuweisen
 
 1. Website-Administration → Kurse → Kurse und Kursbereiche verwalten
@@ -144,6 +146,7 @@ local/thlevasys/
 │   ├── output/
 │   │   ├── request_table.php
 │   │   ├── admin_request_table.php
+│   │   ├── export_options.php
 │   │   └── table_search.php
 │   ├── privacy/
 │   │   └── provider.php

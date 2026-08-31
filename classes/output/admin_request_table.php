@@ -62,6 +62,8 @@ class admin_request_table {
             'info'
         );
 
+        $html .= export_options::render();
+
         $rows = \local_thlevasys\request_helper::get_admin_table_rows();
         if (empty($rows) && $search === '') {
             $html .= $OUTPUT->notification(get_string('admin_requesttable_empty', 'local_thlevasys'), 'info');

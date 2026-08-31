@@ -122,3 +122,14 @@
     width: 9rem;
     white-space: nowrap;
 }
+
+.path-local-thlevasys .local-thlevasys-export-options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-width: 28rem;
+}
+
+.path-local-thlevasys .local-thlevasys-export-field .form-control {
+    max-width: 100%;
+}
