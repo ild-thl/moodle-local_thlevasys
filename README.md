@@ -36,16 +36,19 @@ Zuweisungen erfolgen manuell über die Moodle-Rollenverwaltung. Rollen werden be
 
 ## Evaluation beantragen (zentrale Seite)
 
-Nutzer mit der Rolle **Evaluationsbeauftragte\*r** oder **Evaluations-Admin** sehen in der **Primärnavigation** den Eintrag „Evaluation beantragen“ (unabhängig vom Beantragungszeitraum).
+Nutzer mit der Rolle **Evaluationsbeauftragte\*r** oder **Evaluations-Admin** sehen in der **Primärnavigation** den Eintrag „Evaluation beantragen“ (unabhängig vom Beantragungszeitraum). Der Link führt je nach Rolle auf unterschiedliche Seiten:
 
-- URL: `/local/thlevasys/request.php`
+| Rolle | URL | Inhalt |
+| --- | --- | --- |
+| Evaluationsbeauftragte\*r | `/local/thlevasys/request.php` | Beantragungsformular |
+| Evaluations-Admin | `/local/thlevasys/admin_requests.php` | Übersicht aller Beantragungen |
+
 - Sichtbarkeit des Links: Rollen-Zuweisung als Evaluationsbeauftragte\*r oder Evaluations-Admin
-- Außerhalb des Beantragungszeitraums: Evaluationsbeauftragte\*r sehen auf der Seite eine Hinweis-Meldung; Evaluations-Admins dürfen die Seite weiterhin nutzen
+- Außerhalb des Beantragungszeitraums: Evaluationsbeauftragte\*r sehen auf der Beantragungsseite eine Hinweis-Meldung; Evaluations-Admins können die Übersichtsseite weiterhin nutzen
 - Umsetzung: Hook `\core\hook\navigation\primary_extend` in `db/hooks.php`
 
-### Tabelle
+### Beantragungsseite (Evaluationsbeauftragte\*r)
 
-Auf der Seite erscheint eine Tabelle mit allen Kursen, in deren Kursbereich der Nutzer `local/thlevasys:requestevaluation` besitzt. Pro eingeschriebenem **editingteacher** gibt es eine Zeile.
 
 | Spalte | Inhalt |
 | --- | --- |
@@ -78,6 +81,23 @@ Auf der Seite erscheint eine Tabelle mit allen Kursen, in deren Kursbereich der 
 
 Pro Kombination aus Kurs, Dozent\*in und Antragsteller\*in gibt es höchstens einen Datensatz.
 
+### Übersichtsseite (Evaluations-Admin)
+
+Unter `/local/thlevasys/admin_requests.php` sieht der Evaluations-Admin alle Beantragungen aller Evaluationsbeauftragten im **aktuell konfigurierten Beantragungszeitraum**.
+
+| Spalte | Inhalt |
+| --- | --- |
+| Kurs-ID | Moodle-Kurs-ID |
+| Kursname | Link zur Kursseite |
+| Dozent\*in | Link zum Nutzerprofil im Kurskontext |
+| Teilnehmer\*innen | Anzahl aktiv eingeschriebener Nutzer |
+| Gruppe | Gewählte Kursgruppe |
+| Sprache | DE / EN |
+| Beantragt von | Link zum Nutzerprofil der Antragsteller\*in |
+| Beantragt am | Zeitpunkt der Beantragung |
+
+Sortierung nach allen Spalten (Standard: Beantragt am absteigend), Paginierung mit 10 Einträgen pro Seite.
+
 ### Rolle Evaluationsbeauftragte\*r zuweisen
 
 1. Website-Administration → Kurse → Kurse und Kursbereiche verwalten
@@ -105,6 +125,7 @@ Zugriff erfordert `local/thlevasys:managesettings`. Werte lesen: `get_config('lo
 local/thlevasys/
 ├── version.php
 ├── request.php
+├── admin_requests.php
 ├── settings.php
 ├── styles.css
 ├── amd/
@@ -121,7 +142,8 @@ local/thlevasys/
 │   ├── external/
 │   │   └── toggle_request.php
 │   ├── output/
-│   │   └── request_table.php
+│   │   ├── request_table.php
+│   │   └── admin_request_table.php
 │   ├── privacy/
 │   │   └── provider.php
 │   └── setup.php

@@ -103,7 +103,7 @@ class request_table {
         $table->attributes['id'] = 'local-thlevasys-request-table';
         $table->setup();
 
-        $rows = $this->sort_rows($rows, $table->get_sort_columns());
+        $rows = \local_thlevasys\request_helper::sort_table_rows($rows, $table->get_sort_columns());
         $table->pagesize(10, count($rows));
         $rows = array_slice($rows, $table->get_page_start(), $table->get_page_size());
 
@@ -148,42 +148,6 @@ class request_table {
                 $row->groupname = get_string('group_none', 'local_thlevasys');
             }
         }
-
-        return $rows;
-    }
-
-    /**
-     * Sort rows according to flexible_table sort columns.
-     *
-     * @param array $rows Rows to sort.
-     * @param array $sortcolumns Column => SORT_ASC|SORT_DESC.
-     * @return array
-     */
-    protected function sort_rows(array $rows, array $sortcolumns): array {
-        if (empty($rows) || empty($sortcolumns)) {
-            return $rows;
-        }
-
-        usort($rows, static function ($a, $b) use ($sortcolumns) {
-            foreach ($sortcolumns as $column => $order) {
-                $va = $a->{$column} ?? '';
-                $vb = $b->{$column} ?? '';
-
-                if (is_numeric($va) && is_numeric($vb)) {
-                    $cmp = (float) $va <=> (float) $vb;
-                } else {
-                    $cmp = strcoll(
-                        \core_text::strtolower((string) $va),
-                        \core_text::strtolower((string) $vb)
-                    );
-                }
-
-                if ($cmp !== 0) {
-                    return $order == SORT_DESC ? -$cmp : $cmp;
-                }
-            }
-            return 0;
-        });
 
         return $rows;
     }

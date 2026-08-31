@@ -5,6 +5,19 @@ Alle wesentlichen Änderungen an `local_thlevasys` werden in dieser Datei festge
 Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 Versionierung: Plugin-`release` sowie Moodle-`version` (`YYYYMMDDXX`).
 
+## [0.4.0] - 2026-08-31
+
+Plugin-Version: `2026083100` · Maturity: Alpha
+
+### Hinzugefügt
+
+- Eigene Übersichtsseite für Evaluations-Admins unter `/local/thlevasys/admin_requests.php`
+- Tabelle aller Beantragungen aller Evaluationsbeauftragten im konfigurierten Beantragungszeitraum (Sortierung, Paginierung)
+
+### Geändert
+
+- Navigationslink „Evaluation beantragen“ führt Evaluations-Admins auf die Übersichtsseite
+
 ## [0.3.6] - 2026-08-04
 
 Plugin-Version: `2026080405` · Maturity: Alpha

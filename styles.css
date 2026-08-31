@@ -80,3 +80,45 @@
     margin: 0;
     float: none;
 }
+
+.path-local-thlevasys .local-thlevasys-admin-request-table.generaltable {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.path-local-thlevasys .local-thlevasys-admin-request-table th,
+.path-local-thlevasys .local-thlevasys-admin-request-table td {
+    padding: 0.4rem 0.45rem;
+    vertical-align: middle;
+    overflow: hidden;
+}
+
+.path-local-thlevasys .local-thlevasys-admin-request-table th:nth-child(1),
+.path-local-thlevasys .local-thlevasys-admin-request-table td:nth-child(1) {
+    width: 4.5rem;
+    white-space: nowrap;
+}
+
+.path-local-thlevasys .local-thlevasys-admin-request-table th:nth-child(2),
+.path-local-thlevasys .local-thlevasys-admin-request-table td:nth-child(2),
+.path-local-thlevasys .local-thlevasys-admin-request-table th:nth-child(3),
+.path-local-thlevasys .local-thlevasys-admin-request-table td:nth-child(3),
+.path-local-thlevasys .local-thlevasys-admin-request-table th:nth-child(7),
+.path-local-thlevasys .local-thlevasys-admin-request-table td:nth-child(7) {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.path-local-thlevasys .local-thlevasys-admin-request-table th:nth-child(4),
+.path-local-thlevasys .local-thlevasys-admin-request-table td:nth-child(4),
+.path-local-thlevasys .local-thlevasys-admin-request-table th:nth-child(6),
+.path-local-thlevasys .local-thlevasys-admin-request-table td:nth-child(6) {
+    width: 5rem;
+    white-space: nowrap;
+}
+
+.path-local-thlevasys .local-thlevasys-admin-request-table th:nth-child(8),
+.path-local-thlevasys .local-thlevasys-admin-request-table td:nth-child(8) {
+    width: 9rem;
+    white-space: nowrap;
+}

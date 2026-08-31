@@ -86,6 +86,38 @@ class access {
     }
 
     /**
+     * URL of the evaluation request page for the given user.
+     *
+     * Evaluation admins see the overview of submitted requests; officers the request form.
+     *
+     * @param int|null $userid User id or null for current user.
+     * @return \moodle_url
+     */
+    public static function get_request_page_url(?int $userid = null): \moodle_url {
+        if (self::is_evaluation_admin($userid)) {
+            return new \moodle_url('/local/thlevasys/admin_requests.php');
+        }
+
+        return new \moodle_url('/local/thlevasys/request.php');
+    }
+
+    /**
+     * Configured request period bounds as Unix timestamps, or null if not configured.
+     *
+     * @return array{from: int, to: int}|null
+     */
+    public static function get_request_period_bounds(): ?array {
+        $from = (int) get_config('local_thlevasys', 'requestperiod_from');
+        $to = (int) get_config('local_thlevasys', 'requestperiod_to');
+
+        if ($from <= 0 || $to <= 0) {
+            return null;
+        }
+
+        return ['from' => $from, 'to' => $to];
+    }
+
+    /**
      * Whether the user may use the request form right now.
      *
      * Evaluation admins may always proceed. Evaluation officers only within the request period.

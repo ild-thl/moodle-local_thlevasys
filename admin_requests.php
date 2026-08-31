@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Central page to request evaluations.
+ * Admin overview of submitted evaluation requests.
  *
  * @package    local_thlevasys
  * @copyright  2026 Jan Rieger <jan.rieger@th-luebeck.de>
@@ -26,18 +26,12 @@ require_once(__DIR__ . '/../../config.php');
 
 require_login();
 
-if (!\local_thlevasys\access::can_view_request_navigation()) {
+if (!\local_thlevasys\access::is_evaluation_admin()) {
     throw new moodle_exception('error_requestnotavailable', 'local_thlevasys');
 }
 
-if (\local_thlevasys\access::is_evaluation_admin()) {
-    redirect(new moodle_url('/local/thlevasys/admin_requests.php'));
-}
-
-$categoryid = optional_param('categoryid', 0, PARAM_INT);
-
-$pagetitle = get_string('requestevaluation', 'local_thlevasys');
-$url = new moodle_url('/local/thlevasys/request.php', $categoryid ? ['categoryid' => $categoryid] : []);
+$pagetitle = get_string('admin_requestoverview', 'local_thlevasys');
+$url = new moodle_url('/local/thlevasys/admin_requests.php');
 
 $PAGE->set_url($url);
 $PAGE->set_context(context_system::instance());
@@ -48,19 +42,7 @@ $PAGE->set_heading($pagetitle);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($pagetitle);
 
-if (!\local_thlevasys\access::can_submit_request_now()) {
-    echo $OUTPUT->notification(get_string('error_outside_requestperiod', 'local_thlevasys'), 'warning');
-    echo $OUTPUT->footer();
-    exit;
-}
-
-if ($categoryid && !\local_thlevasys\request_helper::can_request_in_category($categoryid)) {
-    throw new moodle_exception('error_requestnotavailable', 'local_thlevasys');
-}
-
-$table = new \local_thlevasys\output\request_table();
-echo $table->render($categoryid);
-
-$PAGE->requires->js_call_amd('local_thlevasys/toggle_request', 'init');
+$table = new \local_thlevasys\output\admin_request_table();
+echo $table->render();
 
 echo $OUTPUT->footer();

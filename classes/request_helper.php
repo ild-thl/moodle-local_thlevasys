@@ -179,6 +179,117 @@ class request_helper {
     }
 
     /**
+     * Table rows for the admin overview of submitted requests in the current period.
+     *
+     * @return array<int, \stdClass>
+     */
+    public static function get_admin_table_rows(): array {
+        $requests = request_repository::get_requests_in_period();
+        if (empty($requests)) {
+            return [];
+        }
+
+        $rows = [];
+        foreach ($requests as $request) {
+            $course = get_course($request->courseid, false);
+            if (!$course) {
+                continue;
+            }
+
+            $coursecontext = \context_course::instance($request->courseid);
+            $teacher = \core_user::get_user($request->editingteacher, '*', IGNORE_MISSING);
+            $requester = \core_user::get_user($request->requestedby, '*', IGNORE_MISSING);
+            if (!$teacher || !$requester) {
+                continue;
+            }
+
+            $row = new \stdClass();
+            $row->id = (int) $request->id;
+            $row->courseid = (int) $request->courseid;
+            $row->coursename = format_string($course->fullname, true, ['context' => $coursecontext]);
+            $row->teacherid = (int) $request->editingteacher;
+            $row->teachername = fullname($teacher);
+            $row->participantcount = count_enrolled_users($coursecontext, '', 0, true);
+            $row->groupname = self::format_group_name((int) $request->groupid, (int) $request->courseid);
+            $row->lang = $request->lang;
+            $row->langlabel = self::format_language_label($request->lang);
+            $row->requesterid = (int) $request->requestedby;
+            $row->requestername = fullname($requester);
+            $row->timecreated = (int) $request->timecreated;
+            $row->timecreatedlabel = userdate($request->timecreated);
+            $rows[] = $row;
+        }
+
+        return $rows;
+    }
+
+    /**
+     * Sort table rows according to flexible_table sort columns.
+     *
+     * @param array $rows Rows to sort.
+     * @param array $sortcolumns Column => SORT_ASC|SORT_DESC.
+     * @return array
+     */
+    public static function sort_table_rows(array $rows, array $sortcolumns): array {
+        if (empty($rows) || empty($sortcolumns)) {
+            return $rows;
+        }
+
+        usort($rows, static function ($a, $b) use ($sortcolumns) {
+            foreach ($sortcolumns as $column => $order) {
+                $va = $a->{$column} ?? '';
+                $vb = $b->{$column} ?? '';
+
+                if (is_numeric($va) && is_numeric($vb)) {
+                    $cmp = (float) $va <=> (float) $vb;
+                } else {
+                    $cmp = strcoll(
+                        \core_text::strtolower((string) $va),
+                        \core_text::strtolower((string) $vb)
+                    );
+                }
+
+                if ($cmp !== 0) {
+                    return $order == SORT_DESC ? -$cmp : $cmp;
+                }
+            }
+            return 0;
+        });
+
+        return $rows;
+    }
+
+    /**
+     * @param string $lang Language code.
+     * @return string Localised short label.
+     */
+    public static function format_language_label(string $lang): string {
+        if ($lang === 'en') {
+            return get_string('lang_en_short', 'local_thlevasys');
+        }
+
+        return get_string('lang_de_short', 'local_thlevasys');
+    }
+
+    /**
+     * @param int $groupid Group id or 0.
+     * @param int $courseid Course id.
+     * @return string Group name or "no group" string.
+     */
+    protected static function format_group_name(int $groupid, int $courseid): string {
+        if (!$groupid) {
+            return get_string('group_none', 'local_thlevasys');
+        }
+
+        $group = groups_get_group($groupid, 'id, courseid, name', IGNORE_MISSING);
+        if (!$group || (int) $group->courseid !== $courseid) {
+            return get_string('group_none', 'local_thlevasys');
+        }
+
+        return format_string($group->name);
+    }
+
+    /**
      * From a set of allowed category ids, keep those that are not descendants of another allowed id.
      *
      * @param int[] $categoryids Allowed category ids.

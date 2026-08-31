@@ -56,7 +56,7 @@ class hook_callbacks {
         $view = $hook->get_primaryview();
         $view->add(
             get_string('requestevaluation', 'local_thlevasys'),
-            new \moodle_url('/local/thlevasys/request.php'),
+            access::get_request_page_url(),
             \navigation_node::TYPE_CUSTOM,
             null,
             'thlevasys_requestevaluation'

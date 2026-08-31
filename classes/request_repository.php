@@ -49,6 +49,27 @@ class request_repository {
     }
 
     /**
+     * Get all requests created within the configured request period.
+     *
+     * @return \stdClass[] Request records keyed by id.
+     */
+    public static function get_requests_in_period(): array {
+        global $DB;
+
+        $bounds = access::get_request_period_bounds();
+        if ($bounds === null) {
+            return [];
+        }
+
+        return $DB->get_records_select(
+            'local_thlevasys_requests',
+            'timecreated >= :from AND timecreated <= :to',
+            $bounds,
+            'timecreated ASC'
+        );
+    }
+
+    /**
      * Add or update a request for the current user.
      *
      * @param int $courseid Course id.
