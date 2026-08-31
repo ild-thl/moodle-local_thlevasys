@@ -76,7 +76,7 @@ class request_table {
         $existing = \local_thlevasys\request_repository::get_requests_for_user((int) $USER->id);
         $rows = $this->enrich_rows_for_sorting($rows, $existing);
 
-        $table = new \flexible_table('local-thlevasys-requests');
+        $table = new bottom_paging_table('local-thlevasys-requests');
         $table->define_columns([
             'courseid',
             'coursename',

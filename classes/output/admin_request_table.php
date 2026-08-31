@@ -94,7 +94,7 @@ class admin_request_table {
             return $html;
         }
 
-        $table = new \flexible_table('local-thlevasys-admin-requests');
+        $table = new bottom_paging_table('local-thlevasys-admin-requests');
         $table->define_columns([
             'courseid',
             'coursename',
