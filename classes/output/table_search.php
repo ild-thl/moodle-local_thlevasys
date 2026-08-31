@@ -79,16 +79,21 @@ class table_search {
             'class' => 'btn btn-secondary',
             'value' => get_string('search_submit', 'local_thlevasys'),
         ]);
-        if ($search !== '') {
-            $clearurl = clone $actionurl;
-            $html .= \html_writer::link(
-                $clearurl,
-                get_string('search_clear', 'local_thlevasys'),
-                ['class' => 'btn btn-link']
-            );
-        }
         $html .= \html_writer::end_div();
         $html .= \html_writer::end_tag('form');
+
+        if ($search !== '') {
+            $clearurl = clone $actionurl;
+            $clearurl->remove_params(['search', 'page']);
+            $html .= \html_writer::div(
+                \html_writer::link(
+                    $clearurl,
+                    get_string('search_clear', 'local_thlevasys'),
+                    ['class' => 'btn btn-link ps-0']
+                ),
+                'local-thlevasys-table-search-clear mb-3'
+            );
+        }
 
         return $html;
     }

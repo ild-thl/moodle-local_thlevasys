@@ -69,11 +69,12 @@ class admin_request_table {
         }
 
         $baseurl = new \moodle_url('/local/thlevasys/admin_requests.php');
+        $tablebaseurl = clone $baseurl;
         if ($search !== '') {
             $baseurl->param('search', $search);
         }
 
-        $html .= table_search::render($baseurl, $search);
+        $html .= table_search::render($tablebaseurl, $search);
 
         $rows = \local_thlevasys\request_helper::filter_table_rows_by_search($rows, $search, [
             'courseid',
