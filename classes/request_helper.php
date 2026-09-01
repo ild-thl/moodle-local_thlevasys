@@ -212,6 +212,7 @@ class request_helper {
             $row->teachername = fullname($teacher);
             $row->teacheremail = $teacher->email ?? '';
             $row->courseidnumber = format_string($course->idnumber, true, ['context' => $coursecontext]);
+            $row->studiengang = self::get_studiengang_idnumber((int) $course->category);
             $row->participantcount = count_enrolled_users($coursecontext, '', 0, true);
             $row->groupid = (int) $request->groupid;
             $row->lang = $request->lang;
@@ -299,6 +300,45 @@ class request_helper {
         }
 
         return get_string('lang_de_short', 'local_thlevasys');
+    }
+
+    /**
+     * Study programme idnumber for a course category.
+     *
+     * Expected tree: faculty (top) > study programme > optional nested categories > course category.
+     * Returns the idnumber of the study programme category (direct child of the faculty category).
+     *
+     * @param int $categoryid Course category id.
+     * @return string Category idnumber or empty string if not found.
+     */
+    public static function get_studiengang_idnumber(int $categoryid): string {
+        static $cache = [];
+
+        if (array_key_exists($categoryid, $cache)) {
+            return $cache[$categoryid];
+        }
+
+        $category = \core_course_category::get($categoryid, IGNORE_MISSING, true);
+        if (!$category) {
+            $cache[$categoryid] = '';
+            return '';
+        }
+
+        $pathids = array_values(array_filter(array_map('intval', explode('/', trim($category->path, '/')))));
+        if (count($pathids) < 2) {
+            $cache[$categoryid] = '';
+            return '';
+        }
+
+        $studiengangcategory = \core_course_category::get($pathids[1], IGNORE_MISSING, true);
+        if (!$studiengangcategory || trim((string) $studiengangcategory->idnumber) === '') {
+            $cache[$categoryid] = '';
+            return '';
+        }
+
+        $context = \context_coursecat::instance($studiengangcategory->id);
+        $cache[$categoryid] = format_string($studiengangcategory->idnumber, true, ['context' => $context]);
+        return $cache[$categoryid];
     }
 
     /**

@@ -93,6 +93,7 @@ $string['col_teacher_email'] = 'E-Mail';
 $string['col_participants'] = 'LV-TN';
 $string['col_group'] = 'Gruppe';
 $string['col_groupid'] = 'Gruppen-ID';
+$string['col_studiengang'] = 'Studiengang';
 $string['col_language'] = 'Sprache';
 $string['col_select'] = 'Auswahl';
 $string['col_requestedby'] = 'Beantragt von';

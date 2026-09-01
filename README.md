@@ -93,6 +93,7 @@ Unter `/local/thlevasys/admin_requests.php` sieht der Evaluations-Admin alle Bea
 | E-Mail | E-Mail-Adresse der Dozentin bzw. des Dozenten |
 | LV-Name | Link zur Kursseite |
 | LV-Kennung | Kurs-ID aus den Kurs-Einstellungen (`idnumber`) |
+| Studiengang | Kursbereichs-ID (`idnumber`) des Studiengang-Kursbereichs (direktes Kind des Fachbereichs) |
 | LV-TN | Anzahl aktiv eingeschriebener Nutzer |
 | Gruppen-ID | Moodle-Gruppen-ID (`0` = keine Gruppe) |
 | Sprache | DE / EN |
