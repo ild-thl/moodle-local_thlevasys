@@ -82,6 +82,7 @@ class admin_request_table {
             'courseid',
             'coursename',
             'teachername',
+            'teacheremail',
             'courseidnumber',
             'participantcount',
             'groupid',
@@ -96,8 +97,9 @@ class admin_request_table {
         $table = new bottom_paging_table('local-thlevasys-admin-requests');
         $table->define_columns([
             'courseid',
-            'coursename',
             'teachername',
+            'teacheremail',
+            'coursename',
             'courseidnumber',
             'participantcount',
             'groupid',
@@ -105,8 +107,9 @@ class admin_request_table {
         ]);
         $table->define_headers([
             get_string('col_courseid', 'local_thlevasys'),
-            get_string('col_coursename', 'local_thlevasys'),
             get_string('col_teacher', 'local_thlevasys'),
+            get_string('col_teacher_email', 'local_thlevasys'),
+            get_string('col_coursename', 'local_thlevasys'),
             get_string('col_courseidnumber', 'local_thlevasys'),
             get_string('col_participants', 'local_thlevasys'),
             get_string('col_groupid', 'local_thlevasys'),
@@ -126,8 +129,9 @@ class admin_request_table {
         foreach ($rows as $row) {
             $table->add_data([
                 $row->courseid,
-                $this->render_course_link($row),
                 $this->render_teacher_link($row),
+                s($row->teacheremail),
+                $this->render_course_link($row),
                 $row->courseidnumber,
                 $row->participantcount,
                 $row->groupid,

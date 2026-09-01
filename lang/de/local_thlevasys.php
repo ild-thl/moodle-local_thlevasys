@@ -89,6 +89,7 @@ $string['col_courseid'] = 'Kurs-ID';
 $string['col_courseidnumber'] = 'LV-Kennung';
 $string['col_coursename'] = 'LV-Name';
 $string['col_teacher'] = 'Dozent*in';
+$string['col_teacher_email'] = 'E-Mail';
 $string['col_participants'] = 'LV-TN';
 $string['col_group'] = 'Gruppe';
 $string['col_groupid'] = 'Gruppen-ID';

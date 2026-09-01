@@ -210,6 +210,7 @@ class request_helper {
             $row->coursename = format_string($course->fullname, true, ['context' => $coursecontext]);
             $row->teacherid = (int) $request->editingteacher;
             $row->teachername = fullname($teacher);
+            $row->teacheremail = $teacher->email ?? '';
             $row->courseidnumber = format_string($course->idnumber, true, ['context' => $coursecontext]);
             $row->participantcount = count_enrolled_users($coursecontext, '', 0, true);
             $row->groupid = (int) $request->groupid;
