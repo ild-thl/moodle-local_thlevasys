@@ -98,7 +98,9 @@ Unter `/local/thlevasys/admin_requests.php` sieht der Evaluations-Admin alle Bea
 
 Sortierung nach allen Spalten (Standard: Beantragt am absteigend), Paginierung mit 10 Einträgen pro Seite, Suchfeld zum Filtern des Tabelleninhalts.
 
-Oberhalb der Tabelle stehen Export-Einstellungsfelder (Evaluations-Beginn, Evaluations-Erinnerung, Evaluations-Ende, Semester, Fragebogen DE/EN). Die Felder werden nicht gespeichert; ein XML-Export-Button folgt später.
+Oberhalb der Tabelle stehen Export-Einstellungsfelder (Evaluations-Beginn, Evaluations-Erinnerung, Evaluations-Ende, Semester, Fragebogen DE/EN). Die Felder werden nicht gespeichert. Der Link **EvaSys XML** links neben dem Suchfeld erzeugt aus den Feldern und allen Beantragungen im Zeitraum eine XML-Datei zum Import in EvaSys (reines HTML-Formular, kein JavaScript nötig).
+
+**EvaSys-XML-Export:** Enthält Lehrveranstaltungen (`Lecture`) mit Dozierenden (`Person`), Teilnehmenden (`Participant`), Umfragen (`Survey`) und geplanten Online-Vorgängen (`SurveyTaskList`: Öffnen, Einladung ohne E-Mail-Versand, Erinnerung, Schließen). Fragebogen und Semester kommen aus den Export-Feldern; die Fragebogenauswahl pro Beantragung richtet sich nach der gewählten Sprache (DE/EN).
 
 ### Rolle Evaluationsbeauftragte\*r zuweisen
 
@@ -128,6 +130,7 @@ local/thlevasys/
 ├── version.php
 ├── request.php
 ├── admin_requests.php
+├── export_evasys.php
 ├── settings.php
 ├── styles.css
 ├── amd/
@@ -141,6 +144,7 @@ local/thlevasys/
 │   ├── hook_callbacks.php
 │   ├── request_helper.php
 │   ├── request_repository.php
+│   ├── evasys_xml_exporter.php
 │   ├── external/
 │   │   └── toggle_request.php
 │   ├── output/

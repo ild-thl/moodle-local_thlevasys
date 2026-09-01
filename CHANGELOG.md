@@ -15,6 +15,7 @@ Plugin-Version: `2026083100` · Maturity: Alpha
 - Tabelle aller Beantragungen aller Evaluationsbeauftragten im konfigurierten Beantragungszeitraum (Sortierung, Paginierung)
 - Suchfeld zum Filtern des Tabelleninhalts in der Admin-Übersichtstabelle
 - Export-Einstellungsfelder auf der Admin-Übersichtsseite (ohne Speichern; Vorbereitung für XML-Export)
+- EvaSys-XML-Export auf der Admin-Übersichtsseite (Link „EvaSys XML“ neben dem Suchfeld)
 
 ### Geändert
 

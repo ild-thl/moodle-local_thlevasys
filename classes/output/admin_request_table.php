@@ -64,19 +64,19 @@ class admin_request_table {
 
         $html .= export_options::render();
 
-        $rows = \local_thlevasys\request_helper::get_admin_table_rows();
-        if (empty($rows) && $search === '') {
-            $html .= $OUTPUT->notification(get_string('admin_requesttable_empty', 'local_thlevasys'), 'info');
-            return $html;
-        }
-
         $baseurl = new \moodle_url('/local/thlevasys/admin_requests.php');
         $tablebaseurl = clone $baseurl;
         if ($search !== '') {
             $baseurl->param('search', $search);
         }
 
-        $html .= table_search::render($tablebaseurl, $search);
+        $html .= table_search::render($tablebaseurl, $search, [], true);
+
+        $rows = \local_thlevasys\request_helper::get_admin_table_rows();
+        if (empty($rows) && $search === '') {
+            $html .= $OUTPUT->notification(get_string('admin_requesttable_empty', 'local_thlevasys'), 'info');
+            return $html;
+        }
 
         $rows = \local_thlevasys\request_helper::filter_table_rows_by_search($rows, $search, [
             'courseid',

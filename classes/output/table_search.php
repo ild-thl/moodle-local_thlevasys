@@ -37,9 +37,15 @@ class table_search {
      * @param \moodle_url $actionurl Form action URL (without search param).
      * @param string $search Current search term.
      * @param array $hiddenparams Additional hidden GET parameters.
+     * @param bool $showexportlink Whether to show the EvaSys XML export link.
      * @return string HTML
      */
-    public static function render(\moodle_url $actionurl, string $search, array $hiddenparams = []): string {
+    public static function render(
+        \moodle_url $actionurl,
+        string $search,
+        array $hiddenparams = [],
+        bool $showexportlink = false
+    ): string {
         $formid = 'local-thlevasys-table-search';
         $html = \html_writer::start_tag('form', [
             'method' => 'get',
@@ -60,6 +66,14 @@ class table_search {
         }
 
         $html .= \html_writer::start_div('d-flex flex-wrap align-items-end gap-2');
+        if ($showexportlink) {
+            $html .= \html_writer::empty_tag('input', [
+                'type' => 'submit',
+                'class' => 'btn btn-secondary',
+                'form' => export_options::FORM_ID,
+                'value' => get_string('export_evasys_xml', 'local_thlevasys'),
+            ]);
+        }
         $html .= \html_writer::start_div('flex-grow-1');
         $html .= \html_writer::tag('label', get_string('search_label', 'local_thlevasys'), [
             'for' => $formid . '-input',

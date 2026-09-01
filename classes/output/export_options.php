@@ -27,9 +27,12 @@ namespace local_thlevasys\output;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Renders export option inputs without form submission.
+ * Renders export option fields for the EvaSys XML export.
  */
 class export_options {
+
+    /** @var string HTML form id used to associate fields and the submit button. */
+    public const FORM_ID = 'local-thlevasys-export-form';
 
     /**
      * Render export option fields above the admin table.
@@ -39,7 +42,8 @@ class export_options {
     public static function render(): string {
         $now = self::format_datetime_local_value(time());
 
-        $html = \html_writer::start_div('local-thlevasys-export-options mb-4', [
+        $html = self::render_form_opening();
+        $html .= \html_writer::start_div('local-thlevasys-export-options mb-4', [
             'data-region' => 'local-thlevasys-export-options',
         ]);
         $html .= \html_writer::tag('h3', get_string('export_settings_heading', 'local_thlevasys'), [
@@ -57,6 +61,30 @@ class export_options {
 
         $html .= \html_writer::end_div();
         $html .= \html_writer::end_div();
+
+        return $html;
+    }
+
+    /**
+     * Render the hidden POST form shell (fields are associated via the form attribute).
+     *
+     * @return string HTML
+     */
+    protected static function render_form_opening(): string {
+        $exporturl = new \moodle_url('/local/thlevasys/export_evasys.php');
+
+        $html = \html_writer::start_tag('form', [
+            'method' => 'post',
+            'action' => $exporturl->out(false),
+            'id' => self::FORM_ID,
+            'class' => 'd-none',
+        ]);
+        $html .= \html_writer::empty_tag('input', [
+            'type' => 'hidden',
+            'name' => 'sesskey',
+            'value' => sesskey(),
+        ]);
+        $html .= \html_writer::end_tag('form');
 
         return $html;
     }
@@ -81,7 +109,7 @@ class export_options {
             'id' => $id,
             'value' => $value,
             'class' => 'form-control local-thlevasys-export-input',
-            'data-export-field' => $name,
+            'form' => self::FORM_ID,
         ]);
         $html .= \html_writer::end_div();
 
@@ -107,7 +135,7 @@ class export_options {
             'id' => $id,
             'value' => '',
             'class' => 'form-control local-thlevasys-export-input',
-            'data-export-field' => $name,
+            'form' => self::FORM_ID,
         ]);
         $html .= \html_writer::end_div();
 
