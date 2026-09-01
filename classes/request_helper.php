@@ -166,6 +166,7 @@ class request_helper {
                 $row = new \stdClass();
                 $row->rowkey = $course->id . '_' . $teacher->id;
                 $row->courseid = $course->id;
+                $row->courseidnumber = format_string($course->idnumber, true, ['context' => $coursecontext]);
                 $row->coursename = format_string($course->fullname, true, ['context' => $coursecontext]);
                 $row->teacherid = $teacher->id;
                 $row->teachername = fullname($teacher);
@@ -209,6 +210,7 @@ class request_helper {
             $row->coursename = format_string($course->fullname, true, ['context' => $coursecontext]);
             $row->teacherid = (int) $request->editingteacher;
             $row->teachername = fullname($teacher);
+            $row->courseidnumber = format_string($course->idnumber, true, ['context' => $coursecontext]);
             $row->participantcount = count_enrolled_users($coursecontext, '', 0, true);
             $row->groupname = self::format_group_name((int) $request->groupid, (int) $request->courseid);
             $row->lang = $request->lang;

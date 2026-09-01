@@ -86,6 +86,7 @@ $string['search_placeholder'] = 'Search table content …';
 $string['search_submit'] = 'Search';
 $string['search_clear'] = 'Clear search';
 $string['col_courseid'] = 'Course ID';
+$string['col_courseidnumber'] = 'Course identifier';
 $string['col_coursename'] = 'Course name';
 $string['col_teacher'] = 'Teacher';
 $string['col_participants'] = 'Participants';

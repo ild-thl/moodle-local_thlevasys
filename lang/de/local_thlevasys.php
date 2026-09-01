@@ -86,6 +86,7 @@ $string['search_placeholder'] = 'Tabelleninhalt durchsuchen …';
 $string['search_submit'] = 'Suchen';
 $string['search_clear'] = 'Suche zurücksetzen';
 $string['col_courseid'] = 'Kurs-ID';
+$string['col_courseidnumber'] = 'LV-Kennung';
 $string['col_coursename'] = 'Kursname';
 $string['col_teacher'] = 'Dozent*in';
 $string['col_participants'] = 'Teilnehmer*innen';

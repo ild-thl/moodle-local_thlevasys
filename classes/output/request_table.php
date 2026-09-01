@@ -79,6 +79,7 @@ class request_table {
         $table = new bottom_paging_table('local-thlevasys-requests');
         $table->define_columns([
             'courseid',
+            'courseidnumber',
             'coursename',
             'teachername',
             'participantcount',
@@ -88,6 +89,7 @@ class request_table {
         ]);
         $table->define_headers([
             get_string('col_courseid', 'local_thlevasys'),
+            get_string('col_courseidnumber', 'local_thlevasys'),
             get_string('col_coursename', 'local_thlevasys'),
             get_string('col_teacher', 'local_thlevasys'),
             get_string('col_participants', 'local_thlevasys'),
@@ -110,6 +112,7 @@ class request_table {
         foreach ($rows as $row) {
             $table->add_data([
                 $row->courseid,
+                $row->courseidnumber,
                 $this->render_course_link($row),
                 $this->render_teacher_link($row),
                 $row->participantcount,
