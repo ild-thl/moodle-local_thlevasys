@@ -212,7 +212,7 @@ class request_helper {
             $row->teachername = fullname($teacher);
             $row->courseidnumber = format_string($course->idnumber, true, ['context' => $coursecontext]);
             $row->participantcount = count_enrolled_users($coursecontext, '', 0, true);
-            $row->groupname = self::format_group_name((int) $request->groupid, (int) $request->courseid);
+            $row->groupid = (int) $request->groupid;
             $row->lang = $request->lang;
             $row->langlabel = self::format_language_label($request->lang);
             $row->requesterid = (int) $request->requestedby;

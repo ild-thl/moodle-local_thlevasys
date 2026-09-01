@@ -93,12 +93,10 @@ Unter `/local/thlevasys/admin_requests.php` sieht der Evaluations-Admin alle Bea
 | Dozent\*in | Link zum Nutzerprofil im Kurskontext |
 | LV-Kennung | Kurs-ID aus den Kurs-Einstellungen (`idnumber`) |
 | LV-TN | Anzahl aktiv eingeschriebener Nutzer |
-| Gruppe | Gewählte Kursgruppe |
+| Gruppen-ID | Moodle-Gruppen-ID (`0` = keine Gruppe) |
 | Sprache | DE / EN |
-| Beantragt von | Link zum Nutzerprofil der Antragsteller\*in |
-| Beantragt am | Zeitpunkt der Beantragung |
 
-Sortierung nach allen Spalten (Standard: Beantragt am absteigend), Paginierung mit 10 Einträgen pro Seite, Suchfeld zum Filtern des Tabelleninhalts.
+Sortierung nach allen Spalten (Standard: LV-Name aufsteigend), Paginierung mit 10 Einträgen pro Seite, Suchfeld zum Filtern des Tabelleninhalts.
 
 Oberhalb der Tabelle stehen Export-Einstellungsfelder (Evaluations-Beginn, Evaluations-Erinnerung, Evaluations-Ende, Semester, Fragebogen DE/EN). Die Felder werden nicht gespeichert. Der Link **EvaSys XML** links neben dem Suchfeld erzeugt aus den Feldern und allen Beantragungen im Zeitraum eine XML-Datei zum Import in EvaSys (reines HTML-Formular, kein JavaScript nötig).
 

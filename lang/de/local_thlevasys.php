@@ -91,6 +91,7 @@ $string['col_coursename'] = 'LV-Name';
 $string['col_teacher'] = 'Dozent*in';
 $string['col_participants'] = 'LV-TN';
 $string['col_group'] = 'Gruppe';
+$string['col_groupid'] = 'Gruppen-ID';
 $string['col_language'] = 'Sprache';
 $string['col_select'] = 'Auswahl';
 $string['col_requestedby'] = 'Beantragt von';

@@ -84,10 +84,8 @@ class admin_request_table {
             'teachername',
             'courseidnumber',
             'participantcount',
-            'groupname',
+            'groupid',
             'langlabel',
-            'requestername',
-            'timecreatedlabel',
         ]);
 
         if (empty($rows)) {
@@ -102,10 +100,8 @@ class admin_request_table {
             'teachername',
             'courseidnumber',
             'participantcount',
-            'groupname',
+            'groupid',
             'langlabel',
-            'requestername',
-            'timecreated',
         ]);
         $table->define_headers([
             get_string('col_courseid', 'local_thlevasys'),
@@ -113,13 +109,11 @@ class admin_request_table {
             get_string('col_teacher', 'local_thlevasys'),
             get_string('col_courseidnumber', 'local_thlevasys'),
             get_string('col_participants', 'local_thlevasys'),
-            get_string('col_group', 'local_thlevasys'),
+            get_string('col_groupid', 'local_thlevasys'),
             get_string('col_language', 'local_thlevasys'),
-            get_string('col_requestedby', 'local_thlevasys'),
-            get_string('col_timecreated', 'local_thlevasys'),
         ]);
         $table->define_baseurl($baseurl);
-        $table->sortable(true, 'timecreated', SORT_DESC);
+        $table->sortable(true, 'coursename', SORT_ASC);
         $table->collapsible(false);
         $table->attributes['class'] = 'generaltable local-thlevasys-admin-request-table';
         $table->attributes['id'] = 'local-thlevasys-admin-request-table';
@@ -136,10 +130,8 @@ class admin_request_table {
                 $this->render_teacher_link($row),
                 $row->courseidnumber,
                 $row->participantcount,
-                $row->groupname,
+                $row->groupid,
                 $row->langlabel,
-                $this->render_requester_link($row),
-                $row->timecreatedlabel,
             ]);
         }
 
@@ -169,17 +161,6 @@ class admin_request_table {
         return \html_writer::link(
             new \moodle_url('/user/view.php', ['id' => $row->teacherid, 'course' => $row->courseid]),
             $row->teachername
-        );
-    }
-
-    /**
-     * @param \stdClass $row Table row.
-     * @return string
-     */
-    protected function render_requester_link(\stdClass $row): string {
-        return \html_writer::link(
-            new \moodle_url('/user/profile.php', ['id' => $row->requesterid]),
-            $row->requestername
         );
     }
 }
