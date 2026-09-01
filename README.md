@@ -54,9 +54,9 @@ Nutzer mit der Rolle **Evaluationsbeauftragte\*r** oder **Evaluations-Admin** se
 | --- | --- |
 | Kurs-ID | Moodle-Kurs-ID |
 | LV-Kennung | Kurs-ID aus den Kurs-Einstellungen (`idnumber`) |
-| Kursname | Link zur Kursseite |
+| LV-Name | Link zur Kursseite |
 | Dozent\*in | Link zum Nutzerprofil im Kurskontext |
-| Teilnehmer\*innen | Anzahl aktiv eingeschriebener Nutzer |
+| LV-TN | Anzahl aktiv eingeschriebener Nutzer |
 | Gruppe | Dropdown der Kursgruppen (falls vorhanden) |
 | Sprache | Dropdown Deutsch / Englisch |
 | Auswahl | Checkbox zur Beantragung |
@@ -89,10 +89,10 @@ Unter `/local/thlevasys/admin_requests.php` sieht der Evaluations-Admin alle Bea
 | Spalte | Inhalt |
 | --- | --- |
 | Kurs-ID | Moodle-Kurs-ID |
-| Kursname | Link zur Kursseite |
+| LV-Name | Link zur Kursseite |
 | Dozent\*in | Link zum Nutzerprofil im Kurskontext |
 | LV-Kennung | Kurs-ID aus den Kurs-Einstellungen (`idnumber`) |
-| Teilnehmer\*innen | Anzahl aktiv eingeschriebener Nutzer |
+| LV-TN | Anzahl aktiv eingeschriebener Nutzer |
 | Gruppe | Gewählte Kursgruppe |
 | Sprache | DE / EN |
 | Beantragt von | Link zum Nutzerprofil der Antragsteller\*in |
