@@ -65,29 +65,26 @@ class table_search {
             ]);
         }
 
-        $html .= \html_writer::start_div('d-flex flex-wrap align-items-end gap-2');
+        $html .= \html_writer::start_div('d-flex flex-wrap align-items-center');
         if ($showexportlink) {
             $html .= \html_writer::empty_tag('input', [
                 'type' => 'submit',
-                'class' => 'btn btn-secondary',
+                'class' => 'btn btn-secondary me-3',
                 'form' => export_options::FORM_ID,
                 'value' => get_string('export_evasys_xml', 'local_thlevasys'),
+                'style' => 'margin-right: 1rem;',
             ]);
         }
-        $html .= \html_writer::start_div('flex-grow-1');
-        $html .= \html_writer::tag('label', get_string('search_label', 'local_thlevasys'), [
-            'for' => $formid . '-input',
-            'class' => 'form-label',
-        ]);
         $html .= \html_writer::empty_tag('input', [
             'type' => 'search',
             'name' => 'search',
             'id' => $formid . '-input',
             'value' => $search,
-            'class' => 'form-control',
+            'class' => 'form-control me-2',
             'placeholder' => get_string('search_placeholder', 'local_thlevasys'),
+            'aria-label' => get_string('search_label', 'local_thlevasys'),
+            'style' => 'width: 14rem; max-width: 14rem; flex: 0 0 14rem;',
         ]);
-        $html .= \html_writer::end_div();
         $html .= \html_writer::empty_tag('input', [
             'type' => 'submit',
             'class' => 'btn btn-secondary',
