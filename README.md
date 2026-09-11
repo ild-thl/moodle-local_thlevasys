@@ -101,7 +101,7 @@ Sortierung nach allen Spalten (Standard: LV-Name aufsteigend), Paginierung mit 1
 
 Oberhalb der Tabelle stehen Export-Einstellungsfelder (Evaluations-Beginn, Evaluations-Erinnerung, Evaluations-Ende, Semester, Fragebogen DE/EN). Die Felder werden nicht gespeichert. Der Link **EvaSys XML** links neben dem Suchfeld erzeugt aus den Feldern und allen Beantragungen im Zeitraum eine XML-Datei zum Import in EvaSys (reines HTML-Formular, kein JavaScript nötig).
 
-**EvaSys-XML-Export:** Enthält Lehrveranstaltungen (`Lecture`) mit Dozierenden (`Person`), Teilnehmenden (`Participant`), Umfragen (`Survey`) und geplanten Online-Vorgängen (`SurveyTaskList`: Öffnen, Einladung ohne E-Mail-Versand, Erinnerung, Schließen). Fragebogen und Semester kommen aus den Export-Feldern; die Fragebogenauswahl pro Beantragung richtet sich nach der gewählten Sprache (DE/EN).
+**EvaSys-XML-Export:** Lecture-Inhalt im THL-Muster (`p_o_study`, `coursefield1`–`4`, `Person`, `Recipient`). Zeitsteuerung im aktuellen EvaSys-Schema: pro Umfrage eine `SurveyTaskList` mit `OpenSurveyTask`, `InviteParticipantsTask` (E-Mail an Teilnehmende), `RemindParticipantsTask` und `CloseSurveyTask`.
 
 ### Rolle Evaluationsbeauftragte\*r zuweisen
 

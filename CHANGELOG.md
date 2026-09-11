@@ -16,6 +16,7 @@ Plugin-Version: `2026083100` · Maturity: Alpha
 - Suchfeld zum Filtern des Tabelleninhalts in der Admin-Übersichtstabelle
 - Export-Einstellungsfelder auf der Admin-Übersichtsseite (ohne Speichern; Vorbereitung für XML-Export)
 - EvaSys-XML-Export auf der Admin-Übersichtsseite (Link „EvaSys XML“ neben dem Suchfeld)
+- XML-Export im THL-Muster (`Lecture`/`Survey`/`Person`/`Recipient`, inkl. `p_o_study` und `coursefield1`–`4`) mit Zeitsteuerung über `SurveyTaskList`
 
 ### Geändert
 

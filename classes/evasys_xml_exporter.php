@@ -17,6 +17,9 @@
 /**
  * Builds EvaSys XML import files from evaluation requests.
  *
+ * Lecture/Person content follows the THL import pattern; scheduling uses the
+ * current EvaSys SurveyTaskList schema.
+ *
  * @package    local_thlevasys
  * @copyright  2026 Jan Rieger <jan.rieger@th-luebeck.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -31,8 +34,14 @@ defined('MOODLE_INTERNAL') || die();
  */
 class evasys_xml_exporter {
 
-    /** @var string Shared survey task list key for one export file. */
-    private const TASKLIST_KEY = 'STL001';
+    /** @var string Default mail sender name. */
+    private const SENDER_NAME = 'Evaluationsteam';
+
+    /** @var string Default mail sender address. */
+    private const SENDER_EMAIL = 'evaluation@th-luebeck.de';
+
+    /** @var string Default mail subject. */
+    private const MAIL_SUBJECT = 'Evaluation [SURVEY]';
 
     /**
      * Build an EvaSys XML document for all requests in the current period.
@@ -68,17 +77,23 @@ class evasys_xml_exporter {
         $dom->appendChild($root);
 
         $persons = [];
-        $participants = [];
-        $surveys = [];
+        $recipients = [];
+        $tasklists = [];
+        $exported = 0;
 
         foreach ($requests as $request) {
-            $lecturedata = self::build_lecture_data($request, $options, $persons, $participants);
+            $lecturedata = self::build_lecture_data($request, $options, $persons, $recipients);
             if ($lecturedata === null) {
                 continue;
             }
 
+            $requestid = (int) $request->id;
+            $lecturekey = 'L' . $requestid;
+            $surveykey = 'S' . $requestid;
+            $tasklistkey = 'STL' . $requestid;
+
             $lecture = $dom->createElement('Lecture');
-            $lecture->setAttribute('key', $lecturedata['key']);
+            $lecture->setAttribute('key', $lecturekey);
             $root->appendChild($lecture);
 
             $dozs = $dom->createElement('dozs');
@@ -93,29 +108,39 @@ class evasys_xml_exporter {
             self::append_text($dom, $lecture, 'period', $options['semester']);
             self::append_text($dom, $lecture, 'type', $lecturedata['type']);
             self::append_text($dom, $lecture, 'turnout', (string) $lecturedata['turnout']);
-
-            if (!empty($lecturedata['participantkeys'])) {
-                $participantwrapper = $dom->createElement('participants');
-                $lecture->appendChild($participantwrapper);
-                foreach ($lecturedata['participantkeys'] as $participantkey) {
-                    $participantnode = $dom->createElement('participant');
-                    $participantwrapper->appendChild($participantnode);
-                    self::append_ref($dom, $participantnode, 'Participant', $participantkey);
-                }
-            }
-
-            $surveykey = 'Survey' . (int) $request->id;
-            $surveys[$surveykey] = [
-                'form' => $lecturedata['questionnaire'],
-                'period' => $options['semester'],
-            ];
+            self::append_text($dom, $lecture, 'p_o_study', $lecturedata['p_o_study']);
+            self::append_text($dom, $lecture, 'coursefield1', $lecturedata['coursefield1']);
+            self::append_text($dom, $lecture, 'coursefield2', $lecturedata['coursefield2']);
+            self::append_text($dom, $lecture, 'coursefield3', $lecturedata['coursefield3']);
+            self::append_text($dom, $lecture, 'coursefield4', $lecturedata['coursefield4']);
 
             $surveyrefwrapper = $dom->createElement('survey');
             $lecture->appendChild($surveyrefwrapper);
             self::append_ref($dom, $surveyrefwrapper, 'Survey', $surveykey);
+
+            $survey = $dom->createElement('Survey');
+            $survey->setAttribute('key', $surveykey);
+            $root->appendChild($survey);
+
+            self::append_text($dom, $survey, 'survey_form', $lecturedata['questionnaire']);
+            self::append_text($dom, $survey, 'survey_type', 'online');
+            self::append_text($dom, $survey, 'survey_period', $options['semester']);
+            self::append_text($dom, $survey, 'survey_verify', '0');
+
+            $surveytasks = $dom->createElement('survey_tasks');
+            $survey->appendChild($surveytasks);
+            $surveytask = $dom->createElement('survey_task');
+            $surveytasks->appendChild($surveytask);
+            self::append_ref($dom, $surveytask, 'SurveyTaskList', $tasklistkey);
+
+            $tasklists[] = [
+                'key' => $tasklistkey,
+                'recipientkeys' => $lecturedata['recipientkeys'],
+            ];
+            $exported++;
         }
 
-        if (empty($surveys)) {
+        if ($exported === 0) {
             throw new \moodle_exception('error_export_norequests', 'local_thlevasys');
         }
 
@@ -129,36 +154,27 @@ class evasys_xml_exporter {
             if (!empty($persondata['email'])) {
                 self::append_text($dom, $person, 'email', $persondata['email']);
             }
-            self::append_text($dom, $person, 'username', $persondata['username']);
         }
 
-        foreach ($surveys as $surveykey => $surveydata) {
-            $survey = $dom->createElement('Survey');
-            $survey->setAttribute('key', $surveykey);
-            $root->appendChild($survey);
-
-            self::append_text($dom, $survey, 'survey_form', $surveydata['form']);
-            self::append_text($dom, $survey, 'survey_period', $surveydata['period']);
-            self::append_text($dom, $survey, 'survey_type', 'online');
-            self::append_text($dom, $survey, 'survey_verify', '0');
-
-            $surveytasks = $dom->createElement('survey_tasks');
-            $survey->appendChild($surveytasks);
-            $surveytask = $dom->createElement('survey_task');
-            $surveytasks->appendChild($surveytask);
-            self::append_ref($dom, $surveytask, 'SurveyTaskList', self::TASKLIST_KEY);
+        foreach ($tasklists as $tasklist) {
+            self::append_task_list(
+                $dom,
+                $root,
+                $tasklist['key'],
+                $starttime,
+                $invitetime,
+                $remindertime,
+                $endtime,
+                $tasklist['recipientkeys'],
+                $recipients
+            );
         }
 
-        self::append_task_list($dom, $root, $starttime, $invitetime, $remindertime, $endtime);
-
-        foreach ($participants as $participantkey => $participantdata) {
-            $participant = $dom->createElement('Participant');
-            $participant->setAttribute('key', $participantkey);
-            $root->appendChild($participant);
-
-            self::append_text($dom, $participant, 'email', $participantdata['email']);
-            self::append_text($dom, $participant, 'firstname', $participantdata['firstname']);
-            self::append_text($dom, $participant, 'lastname', $participantdata['lastname']);
+        foreach ($recipients as $recipientkey => $recipientdata) {
+            $recipient = $dom->createElement('Recipient');
+            $recipient->setAttribute('key', $recipientkey);
+            $root->appendChild($recipient);
+            self::append_text($dom, $recipient, 'email', $recipientdata['email']);
         }
 
         return $dom->saveXML();
@@ -188,14 +204,14 @@ class evasys_xml_exporter {
      * @param \stdClass $request Request record.
      * @param array $options Export options.
      * @param array $persons Collected person records (by ref).
-     * @param array $participants Collected participant records (by ref).
+     * @param array $recipients Collected recipient records (by ref).
      * @return array|null Lecture data or null if the request cannot be exported.
      */
     protected static function build_lecture_data(
         \stdClass $request,
         array $options,
         array &$persons,
-        array &$participants
+        array &$recipients
     ): ?array {
         $course = get_course($request->courseid, false);
         if (!$course) {
@@ -208,9 +224,6 @@ class evasys_xml_exporter {
         }
 
         $coursecontext = \context_course::instance($request->courseid);
-        $category = \core_course_category::get($course->category, IGNORE_MISSING, true);
-        $orgroot = $category ? $category->get_formatted_name() : '';
-
         $groupid = (int) $request->groupid;
         $lecturename = format_string($course->fullname, true, ['context' => $coursecontext]);
         if ($groupid) {
@@ -220,22 +233,16 @@ class evasys_xml_exporter {
             }
         }
 
-        $short = self::get_course_short($course);
-        if ($groupid) {
-            $short .= '_G' . $groupid;
-        }
-
-        $personkey = 'User' . (int) $teacher->id;
+        $personkey = 'P' . (int) $teacher->id;
         if (!isset($persons[$personkey])) {
             $persons[$personkey] = [
                 'firstname' => $teacher->firstname,
                 'lastname' => $teacher->lastname,
                 'email' => $teacher->email,
-                'username' => $teacher->username,
             ];
         }
 
-        $participantkeys = [];
+        $recipientkeys = [];
         $enrolledusers = request_helper::get_student_participants($coursecontext, $groupid);
         foreach ($enrolledusers as $user) {
             if (empty($user->email)) {
@@ -245,15 +252,13 @@ class evasys_xml_exporter {
                 continue;
             }
 
-            $participantkey = 'P' . (int) $user->id;
-            if (!isset($participants[$participantkey])) {
-                $participants[$participantkey] = [
+            $recipientkey = 'R' . (int) $user->id;
+            if (!isset($recipients[$recipientkey])) {
+                $recipients[$recipientkey] = [
                     'email' => $user->email,
-                    'firstname' => $user->firstname,
-                    'lastname' => $user->lastname,
                 ];
             }
-            $participantkeys[] = $participantkey;
+            $recipientkeys[] = $recipientkey;
         }
 
         $questionnaire = $request->lang === 'en'
@@ -261,16 +266,41 @@ class evasys_xml_exporter {
             : trim($options['questionnairede']);
 
         return [
-            'key' => 'Request' . (int) $request->id,
             'personkey' => $personkey,
             'name' => $lecturename,
-            'orgroot' => $orgroot,
-            'short' => $short,
+            'orgroot' => self::get_faculty_name((int) $course->category),
+            'short' => self::get_course_short($course),
             'type' => get_string('export_lecture_type_default', 'local_thlevasys'),
             'turnout' => count($enrolledusers),
-            'participantkeys' => $participantkeys,
+            'p_o_study' => request_helper::get_studiengang_idnumber((int) $course->category),
+            'coursefield1' => $request->lang === 'en' ? 'englisch' : 'deutsch',
+            'coursefield2' => 'Online',
+            'coursefield3' => (string) (int) $request->courseid,
+            'coursefield4' => (string) $groupid,
+            'recipientkeys' => $recipientkeys,
             'questionnaire' => $questionnaire,
         ];
+    }
+
+    /**
+     * Faculty (top-level category) name for orgroot.
+     *
+     * @param int $categoryid Course category id.
+     * @return string
+     */
+    protected static function get_faculty_name(int $categoryid): string {
+        $category = \core_course_category::get($categoryid, IGNORE_MISSING, true);
+        if (!$category) {
+            return '';
+        }
+
+        $pathids = array_values(array_filter(array_map('intval', explode('/', trim($category->path, '/')))));
+        if (empty($pathids)) {
+            return $category->get_formatted_name();
+        }
+
+        $faculty = \core_course_category::get($pathids[0], IGNORE_MISSING, true);
+        return $faculty ? $faculty->get_formatted_name() : $category->get_formatted_name();
     }
 
     /**
@@ -290,10 +320,10 @@ class evasys_xml_exporter {
     }
 
     /**
-     * Convert a datetime-local value to EvaSys format in the user's timezone.
+     * Convert a datetime-local value to EvaSys ISO datetime format.
      *
      * @param string $value HTML datetime-local value.
-     * @return string EvaSys datetime string.
+     * @return string Datetime string (Y-m-d\TH:i:s).
      */
     protected static function format_evasys_datetime(string $value): string {
         $value = trim($value);
@@ -327,23 +357,31 @@ class evasys_xml_exporter {
     }
 
     /**
+     * Append a SurveyTaskList for one survey.
+     *
      * @param \DOMDocument $dom Document.
      * @param \DOMElement $parent Parent element.
-     * @param string $starttime EvaSys open time.
-     * @param string $invitetime EvaSys invite time.
-     * @param string $remindertime EvaSys reminder time.
-     * @param string $endtime EvaSys end time.
+     * @param string $tasklistkey Task list key.
+     * @param string $starttime Open time.
+     * @param string $invitetime Invite time.
+     * @param string $remindertime Reminder time.
+     * @param string $endtime Close time.
+     * @param string[] $recipientkeys Recipient keys for this lecture.
+     * @param array $recipients Recipient data by key.
      */
     protected static function append_task_list(
         \DOMDocument $dom,
         \DOMElement $parent,
+        string $tasklistkey,
         string $starttime,
         string $invitetime,
         string $remindertime,
-        string $endtime
+        string $endtime,
+        array $recipientkeys,
+        array $recipients
     ): void {
         $tasklist = $dom->createElement('SurveyTaskList');
-        $tasklist->setAttribute('key', self::TASKLIST_KEY);
+        $tasklist->setAttribute('key', $tasklistkey);
         $parent->appendChild($tasklist);
 
         $opensurvey = $dom->createElement('OpenSurveyTask');
@@ -353,17 +391,87 @@ class evasys_xml_exporter {
         $invite = $dom->createElement('InviteParticipantsTask');
         $tasklist->appendChild($invite);
         self::append_text($dom, $invite, 'StartTime', $invitetime);
-        self::append_text($dom, $invite, 'SendEmail', 'false');
+        self::append_text($dom, $invite, 'SendEmail', 'true');
         self::append_text($dom, $invite, 'CombineMail', 'true');
+        self::append_text($dom, $invite, 'SenderName', self::SENDER_NAME);
+        self::append_text($dom, $invite, 'SenderEmail', self::SENDER_EMAIL);
+        self::append_text($dom, $invite, 'EmailSubject', self::MAIL_SUBJECT);
+        self::append_text($dom, $invite, 'EmailText', self::get_dispatch_mail_text());
+
+        $inviterecipients = $dom->createElement('Recipients');
+        $invite->appendChild($inviterecipients);
+        foreach ($recipientkeys as $recipientkey) {
+            $email = $recipients[$recipientkey]['email'] ?? '';
+            if ($email === '') {
+                continue;
+            }
+            self::append_text($dom, $inviterecipients, 'ParticipantEmail', $email);
+        }
 
         $remind = $dom->createElement('RemindParticipantsTask');
         $tasklist->appendChild($remind);
         self::append_text($dom, $remind, 'StartTime', $remindertime);
         self::append_text($dom, $remind, 'CombineMail', 'true');
+        self::append_text($dom, $remind, 'SenderName', self::SENDER_NAME);
+        self::append_text($dom, $remind, 'SenderEmail', self::SENDER_EMAIL);
+        self::append_text($dom, $remind, 'EmailSubject', self::MAIL_SUBJECT);
+        self::append_text($dom, $remind, 'EmailText', self::get_remind_mail_text());
 
         $close = $dom->createElement('CloseSurveyTask');
         $tasklist->appendChild($close);
         self::append_text($dom, $close, 'StartTime', $endtime);
+    }
+
+    /**
+     * Invitation mail body (THL template).
+     *
+     * @return string
+     */
+    protected static function get_dispatch_mail_text(): string {
+        return "Liebe Studierende,\\n\n" .
+            "\\n\n" .
+            "Sie sind hiermit zur Stimmabgabe bei einer Online-Befragung der Technischen Hochschule Lübeck berechtigt. " .
+            "Ihre Meinung ist uns wichtig, wir freuen uns über Ihre Rückmeldung.\\n " .
+            "Lehrveranstaltung: [SURVEY] \\n Lehrperson: [FIRSTNAME] [SURNAME]\\n\n" .
+            "Bitte folgen Sie dem Link, um den Fragebogen zu öffnen.\\n\n" .
+            "\\n\n" .
+            "[DIRECT_ONLINE_LINK]\\n\n" .
+            "\\n\n" .
+            "\\n\n" .
+            "Mit freundlichen Grüßen,\\n\n" .
+            "\\n\n" .
+            "Das Evaluationsteam der Technischen Hochschule Lübeck\n" .
+            "\\n \n" .
+            "---------------------- \n" .
+            "\\n \n" .
+            "HINWEIS: Diese E-Mail wurde automatisch generiert. Die in dieser E-Mail angegebene TAN ist nicht mit Ihrer " .
+            "Person verbunden. Ihre Stimmabgabe erfolgt anonym.";
+    }
+
+    /**
+     * Reminder mail body (THL template).
+     *
+     * @return string
+     */
+    protected static function get_remind_mail_text(): string {
+        return "Liebe Studierende,\\n\n" .
+            "\\n\n" .
+            "wir möchten Sie daran erinnern, dass Sie noch eine Woche bei einer Online-Befragung der Technischen " .
+            "Hochschule Lübeck teilnehmen können. Ihre Meinung ist uns wichtig, wir freuen uns über Ihre Rückmeldung.\\n " .
+            "Lehrveranstaltung: [SURVEY] \\n Lehrperson: [FIRSTNAME] [SURNAME]\\n\n" .
+            "Bitte folgen Sie dem Link, um den Fragebogen zu öffnen.\\n\n" .
+            "\\n\n" .
+            "[DIRECT_ONLINE_LINK]\\n\n" .
+            "\\n\n" .
+            "\\n\n" .
+            "Mit freundlichen Grüßen,\\n\n" .
+            "\\n\n" .
+            "Das Evaluationsteam der Technischen Hochschule Lübeck\n" .
+            "\\n \n" .
+            "---------------------- \n" .
+            "\\n \n" .
+            "HINWEIS: Diese E-Mail wurde automatisch generiert. Die in dieser E-Mail angegebene TAN ist nicht mit Ihrer " .
+            "Person verbunden. Ihre Stimmabgabe erfolgt anonym.";
     }
 
     /**
@@ -374,8 +482,8 @@ class evasys_xml_exporter {
      */
     protected static function append_ref(\DOMDocument $dom, \DOMElement $parent, string $type, string $key): void {
         $ref = $dom->createElement('EvaSysRef');
-        $ref->setAttribute('type', $type);
         $ref->setAttribute('key', $key);
+        $ref->setAttribute('type', $type);
         $parent->appendChild($ref);
     }
 
