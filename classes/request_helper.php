@@ -155,8 +155,14 @@ class request_helper {
                 'u.id, u.firstname, u.lastname, u.firstnamephonetic, u.lastnamephonetic, u.middlename, u.alternatename'
             );
 
-            $participantcount = self::count_student_participants($coursecontext);
             $groups = groups_get_all_groups($course->id);
+            $participantcounts = [0 => self::count_student_participants($coursecontext)];
+            foreach ($groups as $group) {
+                $participantcounts[(int) $group->id] = self::count_student_participants(
+                    $coursecontext,
+                    (int) $group->id
+                );
+            }
 
             foreach ($teachers as $teacher) {
                 if (!is_enrolled($coursecontext, $teacher, '', true)) {
@@ -170,7 +176,8 @@ class request_helper {
                 $row->coursename = format_string($course->fullname, true, ['context' => $coursecontext]);
                 $row->teacherid = $teacher->id;
                 $row->teachername = fullname($teacher);
-                $row->participantcount = $participantcount;
+                $row->participantcounts = $participantcounts;
+                $row->participantcount = $participantcounts[0];
                 $row->groups = $groups;
                 $rows[] = $row;
             }

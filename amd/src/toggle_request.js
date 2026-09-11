@@ -32,6 +32,34 @@ const getRowValues = (rowkey) => {
 };
 
 /**
+ * Update the participant count cell for the selected group.
+ *
+ * @param {string} rowkey Row key (courseid_teacherid).
+ * @param {number} groupid Selected group id (0 = no group / whole course).
+ */
+const updateParticipantCount = (rowkey, groupid) => {
+    const cell = document.getElementById(`participants_${rowkey}`);
+    if (!cell || !cell.dataset.counts) {
+        return;
+    }
+
+    let counts = {};
+    try {
+        counts = JSON.parse(cell.dataset.counts);
+    } catch (error) {
+        return;
+    }
+
+    const key = String(groupid);
+    if (Object.prototype.hasOwnProperty.call(counts, key)) {
+        cell.textContent = counts[key];
+        return;
+    }
+
+    cell.textContent = Object.prototype.hasOwnProperty.call(counts, '0') ? counts['0'] : '0';
+};
+
+/**
  * Call the external toggle webservice.
  *
  * @param {HTMLInputElement} checkbox Checkbox element.
@@ -86,6 +114,10 @@ export const init = () => {
         const rowkey = select.dataset.rowkey;
         if (!rowkey) {
             return;
+        }
+
+        if (select.matches(SELECTORS.group)) {
+            updateParticipantCount(rowkey, parseInt(select.value, 10) || 0);
         }
 
         const relatedCheckbox = document.getElementById(`selected_${rowkey}`);

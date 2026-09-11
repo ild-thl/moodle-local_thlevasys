@@ -115,7 +115,7 @@ class request_table {
                 $row->courseidnumber,
                 $this->render_course_link($row),
                 $this->render_teacher_link($row),
-                $row->participantcount,
+                $this->render_participant_cell($row),
                 $this->render_group_cell($row),
                 $this->render_language_cell($row),
                 $this->render_select_cell($row),
@@ -150,6 +150,9 @@ class request_table {
             } else {
                 $row->groupname = get_string('group_none', 'local_thlevasys');
             }
+
+            $counts = $row->participantcounts ?? [];
+            $row->participantcount = (int) ($counts[$row->groupid] ?? $counts[0] ?? 0);
         }
 
         return $rows;
@@ -164,6 +167,19 @@ class request_table {
             new \moodle_url('/course/view.php', ['id' => $row->courseid]),
             $row->coursename
         );
+    }
+
+    /**
+     * @param \stdClass $row Table row.
+     * @return string
+     */
+    protected function render_participant_cell(\stdClass $row): string {
+        $counts = $row->participantcounts ?? [0 => (int) $row->participantcount];
+
+        return \html_writer::span((string) (int) $row->participantcount, 'local-thlevasys-participant-count', [
+            'id' => 'participants_' . $row->rowkey,
+            'data-counts' => json_encode($counts, JSON_FORCE_OBJECT),
+        ]);
     }
 
     /**

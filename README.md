@@ -56,8 +56,7 @@ Nutzer mit der Rolle **Evaluationsbeauftragte\*r** oder **Evaluations-Admin** se
 | LV-Kennung | Kurs-ID aus den Kurs-Einstellungen (`idnumber`) |
 | LV-Name | Link zur Kursseite |
 | Dozent\*in | Link zum Nutzerprofil im Kurskontext |
-| LV-TN | Anzahl aktiv eingeschriebener Nutzer mit der Rolle Teilnehmer (`student`) |
-| Gruppe | Dropdown der Kursgruppen (falls vorhanden) |
+| LV-TN | Anzahl aktiv eingeschriebener Nutzer mit der Rolle Teilnehmer (`student`); bei Gruppenauswahl nur die gewählte Gruppe |
 | Sprache | Dropdown Deutsch / Englisch |
 | Auswahl | Checkbox zur Beantragung |
 
