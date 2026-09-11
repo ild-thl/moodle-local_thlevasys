@@ -165,8 +165,7 @@ class evasys_xml_exporter {
                 $invitetime,
                 $remindertime,
                 $endtime,
-                $tasklist['recipientkeys'],
-                $recipients
+                $tasklist['recipientkeys']
             );
         }
 
@@ -367,7 +366,6 @@ class evasys_xml_exporter {
      * @param string $remindertime Reminder time.
      * @param string $endtime Close time.
      * @param string[] $recipientkeys Recipient keys for this lecture.
-     * @param array $recipients Recipient data by key.
      */
     protected static function append_task_list(
         \DOMDocument $dom,
@@ -377,8 +375,7 @@ class evasys_xml_exporter {
         string $invitetime,
         string $remindertime,
         string $endtime,
-        array $recipientkeys,
-        array $recipients
+        array $recipientkeys
     ): void {
         $tasklist = $dom->createElement('SurveyTaskList');
         $tasklist->setAttribute('key', $tasklistkey);
@@ -401,11 +398,9 @@ class evasys_xml_exporter {
         $inviterecipients = $dom->createElement('Recipients');
         $invite->appendChild($inviterecipients);
         foreach ($recipientkeys as $recipientkey) {
-            $email = $recipients[$recipientkey]['email'] ?? '';
-            if ($email === '') {
-                continue;
-            }
-            self::append_text($dom, $inviterecipients, 'ParticipantEmail', $email);
+            $recipient = $dom->createElement('recipient');
+            $inviterecipients->appendChild($recipient);
+            self::append_ref($dom, $recipient, 'Recipient', $recipientkey);
         }
 
         $remind = $dom->createElement('RemindParticipantsTask');
