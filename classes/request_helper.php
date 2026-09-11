@@ -155,7 +155,7 @@ class request_helper {
                 'u.id, u.firstname, u.lastname, u.firstnamephonetic, u.lastnamephonetic, u.middlename, u.alternatename'
             );
 
-            $participantcount = count_enrolled_users($coursecontext, '', 0, true);
+            $participantcount = self::count_student_participants($coursecontext);
             $groups = groups_get_all_groups($course->id);
 
             foreach ($teachers as $teacher) {
@@ -213,7 +213,7 @@ class request_helper {
             $row->teacheremail = $teacher->email ?? '';
             $row->courseidnumber = format_string($course->idnumber, true, ['context' => $coursecontext]);
             $row->studiengang = self::get_studiengang_idnumber((int) $course->category);
-            $row->participantcount = count_enrolled_users($coursecontext, '', 0, true);
+            $row->participantcount = self::count_student_participants($coursecontext, (int) $request->groupid);
             $row->groupid = (int) $request->groupid;
             $row->lang = $request->lang;
             $row->langlabel = self::format_language_label($request->lang);
@@ -300,6 +300,56 @@ class request_helper {
         }
 
         return get_string('lang_de_short', 'local_thlevasys');
+    }
+
+    /**
+     * Count actively enrolled users with the student role.
+     *
+     * @param \context_course $context Course context.
+     * @param int $groupid Optional group id (0 = whole course).
+     * @return int
+     */
+    public static function count_student_participants(\context_course $context, int $groupid = 0): int {
+        return count(self::get_student_participants($context, $groupid));
+    }
+
+    /**
+     * Actively enrolled users with the student role.
+     *
+     * @param \context_course $context Course context.
+     * @param int $groupid Optional group id (0 = whole course).
+     * @return \stdClass[] Users indexed by id.
+     */
+    public static function get_student_participants(\context_course $context, int $groupid = 0): array {
+        global $DB;
+
+        $studentroleid = $DB->get_field('role', 'id', ['shortname' => 'student']);
+        if (!$studentroleid) {
+            return [];
+        }
+
+        $students = get_role_users(
+            $studentroleid,
+            $context,
+            false,
+            'u.id, u.firstname, u.lastname, u.email, u.username',
+            null,
+            true,
+            $groupid ?: ''
+        );
+        if (empty($students)) {
+            return [];
+        }
+
+        $users = [];
+        foreach ($students as $student) {
+            if (!is_enrolled($context, $student, '', true)) {
+                continue;
+            }
+            $users[(int) $student->id] = $student;
+        }
+
+        return $users;
     }
 
     /**

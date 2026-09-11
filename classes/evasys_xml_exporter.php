@@ -236,7 +236,7 @@ class evasys_xml_exporter {
         }
 
         $participantkeys = [];
-        $enrolledusers = self::get_enrolled_participants($coursecontext, $groupid);
+        $enrolledusers = request_helper::get_student_participants($coursecontext, $groupid);
         foreach ($enrolledusers as $user) {
             if (empty($user->email)) {
                 continue;
@@ -287,39 +287,6 @@ class evasys_xml_exporter {
         }
 
         return $short;
-    }
-
-    /**
-     * @param \context_course $context Course context.
-     * @param int $groupid Group id or 0.
-     * @return \stdClass[] Enrolled users indexed by id.
-     */
-    protected static function get_enrolled_participants(\context_course $context, int $groupid): array {
-        if ($groupid) {
-            $members = groups_get_members($groupid, 'u.id, u.firstname, u.lastname, u.email, u.username', 'u.lastname, u.firstname');
-            if (empty($members)) {
-                return [];
-            }
-
-            $users = [];
-            foreach ($members as $member) {
-                if (is_enrolled($context, $member, '', true)) {
-                    $users[$member->id] = $member;
-                }
-            }
-            return $users;
-        }
-
-        return get_enrolled_users(
-            $context,
-            '',
-            0,
-            'u.id, u.firstname, u.lastname, u.email, u.username',
-            'u.lastname, u.firstname',
-            0,
-            0,
-            true
-        );
     }
 
     /**
