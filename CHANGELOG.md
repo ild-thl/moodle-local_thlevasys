@@ -5,6 +5,12 @@ Alle wesentlichen Änderungen an `local_thlevasys` werden in dieser Datei festge
 Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 Versionierung: Plugin-`release` sowie Moodle-`version` (`YYYYMMDDXX`).
 
+## [Unreleased]
+
+### Hinzugefügt
+
+- CSV-Export des Tabelleninhalts (Admin-Übersicht und Beantragungstabelle) über die Moodle-Dataformat-API; unabhängig vom EvaSys-XML-Export
+
 ## [0.4.0] - 2026-08-31
 
 Plugin-Version: `2026083100` · Maturity: Alpha

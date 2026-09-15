@@ -69,6 +69,7 @@ $string['export_semester'] = 'Semester';
 $string['export_questionnaire_de'] = 'Fragebogen (deutsch)';
 $string['export_questionnaire_en'] = 'Fragebogen (englisch)';
 $string['export_evasys_xml'] = 'EvaSys XML';
+$string['export_table_csv'] = 'CSV';
 $string['export_lecture_type_default'] = 'Lehrveranstaltung';
 $string['error_export_norequests'] = 'Es liegen keine beantragten Evaluationen im konfigurierten Beantragungszeitraum vor.';
 $string['error_export_semesterrequired'] = 'Bitte ein Semester für den Export angeben.';

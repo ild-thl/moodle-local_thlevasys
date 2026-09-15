@@ -73,6 +73,22 @@ class request_table {
             return $html;
         }
 
+        $csvurl = new \moodle_url('/local/thlevasys/export_csv.php', [
+            'scope' => 'request',
+            'sesskey' => sesskey(),
+        ]);
+        if ($filtercategoryid) {
+            $csvurl->param('categoryid', $filtercategoryid);
+        }
+        $html .= \html_writer::div(
+            \html_writer::link(
+                $csvurl,
+                get_string('export_table_csv', 'local_thlevasys'),
+                ['class' => 'btn btn-secondary']
+            ),
+            'local-thlevasys-table-csv-export mb-3'
+        );
+
         $existing = \local_thlevasys\request_repository::get_requests_for_user((int) $USER->id);
         $rows = $this->enrich_rows_for_sorting($rows, $existing);
 
@@ -138,7 +154,7 @@ class request_table {
      * @param array $existing Existing request records keyed by rowkey.
      * @return array
      */
-    protected function enrich_rows_for_sorting(array $rows, array $existing): array {
+    public function enrich_rows_for_sorting(array $rows, array $existing): array {
         foreach ($rows as $row) {
             $request = $existing[$row->rowkey] ?? null;
             $row->selected = $request ? 1 : 0;

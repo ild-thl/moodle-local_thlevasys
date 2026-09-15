@@ -67,6 +67,21 @@ class table_search {
 
         $html .= \html_writer::start_div('d-flex flex-wrap align-items-center');
         if ($showexportlink) {
+            $csvurl = new \moodle_url('/local/thlevasys/export_csv.php', [
+                'scope' => 'admin',
+                'sesskey' => sesskey(),
+            ]);
+            if ($search !== '') {
+                $csvurl->param('search', $search);
+            }
+            $html .= \html_writer::link(
+                $csvurl,
+                get_string('export_table_csv', 'local_thlevasys'),
+                [
+                    'class' => 'btn btn-secondary',
+                    'style' => 'margin-right: 0.5rem;',
+                ]
+            );
             $html .= \html_writer::empty_tag('input', [
                 'type' => 'submit',
                 'class' => 'btn btn-secondary me-3',
