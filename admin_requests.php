@@ -45,7 +45,6 @@ $PAGE->set_title($pagetitle);
 $PAGE->set_heading($pagetitle);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($pagetitle);
 
 $table = new \local_thlevasys\output\admin_request_table();
 echo $table->render($search);

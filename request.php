@@ -46,7 +46,6 @@ $PAGE->set_title($pagetitle);
 $PAGE->set_heading($pagetitle);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($pagetitle);
 
 if (!\local_thlevasys\access::can_submit_request_now()) {
     echo $OUTPUT->notification(get_string('error_outside_requestperiod', 'local_thlevasys'), 'warning');
