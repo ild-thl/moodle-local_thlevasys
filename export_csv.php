@@ -15,9 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Download table contents as CSV (Moodle dataformat API).
+ * Download table contents as Excel-friendly CSV.
  *
  * Independent of the EvaSys XML export – only mirrors the visible table data.
+ * Uses Moodle csv_export_writer with semicolon separator and UTF-8 BOM so
+ * German Excel opens values in separate columns.
  *
  * @package    local_thlevasys
  * @copyright  2026 Jan Rieger <jan.rieger@th-luebeck.de>
@@ -27,9 +29,30 @@
 define('NO_OUTPUT_BUFFERING', true);
 
 require_once(__DIR__ . '/../../config.php');
+require_once($CFG->libdir . '/csvlib.class.php');
 
 require_login();
 require_sesskey();
+
+/**
+ * Send an Excel-friendly CSV download (semicolon + UTF-8 BOM) and exit.
+ *
+ * @param string $filenamebase Filename prefix without extension.
+ * @param string[] $headers Column headers (display labels).
+ * @param iterable $rows Row objects/arrays.
+ * @param callable $mapper Maps each row to a list of cell values (same order as headers).
+ */
+function local_thlevasys_download_excel_csv(string $filenamebase, array $headers, iterable $rows, callable $mapper): void {
+    $csv = new csv_export_writer('semicolon', '"', 'application/download', true);
+    $csv->set_filename($filenamebase);
+    $csv->add_data($headers);
+
+    foreach ($rows as $row) {
+        $csv->add_data($mapper($row));
+    }
+
+    $csv->download_file();
+}
 
 $scope = required_param('scope', PARAM_ALPHA);
 
@@ -56,26 +79,24 @@ if ($scope === 'admin') {
     $rows = \local_thlevasys\request_helper::filter_table_rows_by_search($rows, trim($search), array_keys($columns));
     $rows = \local_thlevasys\request_helper::sort_table_rows($rows, ['coursename' => SORT_ASC]);
 
-    \core\dataformat::download_data(
+    local_thlevasys_download_excel_csv(
         'thlevasys_admin_requests',
-        'csv',
-        $columns,
+        array_values($columns),
         $rows,
         static function(\stdClass $row): array {
             return [
-                'courseid' => $row->courseid,
-                'teachername' => $row->teachername,
-                'teacheremail' => $row->teacheremail,
-                'coursename' => $row->coursename,
-                'courseidnumber' => $row->courseidnumber,
-                'studiengang' => $row->studiengang,
-                'participantcount' => $row->participantcount,
-                'groupid' => $row->groupid,
-                'langlabel' => $row->langlabel,
+                $row->courseid,
+                $row->teachername,
+                $row->teacheremail,
+                $row->coursename,
+                $row->courseidnumber,
+                $row->studiengang,
+                $row->participantcount,
+                $row->groupid,
+                $row->langlabel,
             ];
         }
     );
-    exit;
 }
 
 if ($scope === 'request') {
@@ -97,14 +118,14 @@ if ($scope === 'request') {
     }
 
     $columns = [
-        'courseid' => get_string('col_courseid', 'local_thlevasys'),
-        'courseidnumber' => get_string('col_courseidnumber', 'local_thlevasys'),
-        'coursename' => get_string('col_coursename', 'local_thlevasys'),
-        'teachername' => get_string('col_teacher', 'local_thlevasys'),
-        'participantcount' => get_string('col_participants', 'local_thlevasys'),
-        'groupname' => get_string('col_group', 'local_thlevasys'),
-        'langlabel' => get_string('col_language', 'local_thlevasys'),
-        'selected' => get_string('col_select', 'local_thlevasys'),
+        get_string('col_courseid', 'local_thlevasys'),
+        get_string('col_courseidnumber', 'local_thlevasys'),
+        get_string('col_coursename', 'local_thlevasys'),
+        get_string('col_teacher', 'local_thlevasys'),
+        get_string('col_participants', 'local_thlevasys'),
+        get_string('col_group', 'local_thlevasys'),
+        get_string('col_language', 'local_thlevasys'),
+        get_string('col_select', 'local_thlevasys'),
     ];
 
     $rows = \local_thlevasys\request_helper::get_table_rows($categoryid);
@@ -112,9 +133,8 @@ if ($scope === 'request') {
     $rows = (new \local_thlevasys\output\request_table())->enrich_rows_for_sorting($rows, $existing);
     $rows = \local_thlevasys\request_helper::sort_table_rows($rows, ['coursename' => SORT_ASC]);
 
-    \core\dataformat::download_data(
+    local_thlevasys_download_excel_csv(
         'thlevasys_requests',
-        'csv',
         $columns,
         $rows,
         static function(\stdClass $row): array {
@@ -123,18 +143,17 @@ if ($scope === 'request') {
                 : get_string('lang_de_short', 'local_thlevasys');
 
             return [
-                'courseid' => $row->courseid,
-                'courseidnumber' => $row->courseidnumber,
-                'coursename' => $row->coursename,
-                'teachername' => $row->teachername,
-                'participantcount' => $row->participantcount,
-                'groupname' => $row->groupname,
-                'langlabel' => $langlabel,
-                'selected' => !empty($row->selected) ? get_string('yes') : get_string('no'),
+                $row->courseid,
+                $row->courseidnumber,
+                $row->coursename,
+                $row->teachername,
+                $row->participantcount,
+                $row->groupname,
+                $langlabel,
+                !empty($row->selected) ? get_string('yes') : get_string('no'),
             ];
         }
     );
-    exit;
 }
 
 throw new moodle_exception('error_requestnotavailable', 'local_thlevasys');

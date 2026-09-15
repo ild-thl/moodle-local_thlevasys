@@ -9,7 +9,7 @@ Versionierung: Plugin-`release` sowie Moodle-`version` (`YYYYMMDDXX`).
 
 ### Hinzugefügt
 
-- CSV-Export des Tabelleninhalts (Admin-Übersicht und Beantragungstabelle) über die Moodle-Dataformat-API; unabhängig vom EvaSys-XML-Export
+- CSV-Export des Tabelleninhalts (Admin-Übersicht und Beantragungstabelle) als Excel-taugliche Datei (Semikolon, UTF-8-BOM) über Moodles `csv_export_writer`; unabhängig vom EvaSys-XML-Export
 
 ## [0.4.0] - 2026-08-31
 

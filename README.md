@@ -66,7 +66,7 @@ Nutzer mit der Rolle **Evaluationsbeauftragte\*r** oder **Evaluations-Admin** se
 
 **Paginierung:** Maximal 10 Einträge pro Seite.
 
-**CSV-Export:** Button **CSV** direkt über der Tabelle. Exportiert den aktuellen Tabelleninhalt (inkl. Kursbereich-Filter und aktuellem Auswahlstand) als CSV über die Moodle-Dataformat-API (`dataformat_csv`), unabhängig vom EvaSys-XML-Export.
+**CSV-Export:** Button **CSV** direkt über der Tabelle. Exportiert den aktuellen Tabelleninhalt (inkl. Kursbereich-Filter und aktuellem Auswahlstand) als Excel-taugliche CSV (Semikolon, UTF-8-BOM) über Moodles `csv_export_writer`, unabhängig vom EvaSys-XML-Export.
 
 **Auswahl speichern:** Beim Setzen der Checkbox wird sofort ein Datensatz in `local_thlevasys_requests` angelegt (AJAX). Beim Entfernen wird der Datensatz gelöscht. Änderungen an Gruppe/Sprache bei gesetzter Checkbox aktualisieren den Datensatz. Bestehende Beantragungen des aktuellen Nutzers werden vorausgewählt.
 
@@ -101,7 +101,7 @@ Unter `/local/thlevasys/admin_requests.php` sieht der Evaluations-Admin alle Bea
 
 Sortierung nach allen Spalten (Standard: LV-Name aufsteigend), Paginierung mit 10 Einträgen pro Seite, Suchfeld zum Filtern des Tabelleninhalts.
 
-Oberhalb der Tabelle stehen Export-Einstellungsfelder (Evaluations-Beginn, Evaluations-Erinnerung, Evaluations-Ende, Semester, Fragebogen DE/EN). Die Felder werden nicht gespeichert. Links neben dem Suchfeld: Button **CSV** (Tabelleninhalt inkl. aktiver Suche) und **EvaSys XML** (Import für EvaSys). Beide sind voneinander unabhängig; der CSV-Export nutzt die Moodle-Dataformat-API (`dataformat_csv`).
+Oberhalb der Tabelle stehen Export-Einstellungsfelder (Evaluations-Beginn, Evaluations-Erinnerung, Evaluations-Ende, Semester, Fragebogen DE/EN). Die Felder werden nicht gespeichert. Links neben dem Suchfeld: Button **CSV** (Tabelleninhalt inkl. aktiver Suche, Semikolon/UTF-8-BOM für Excel) und **EvaSys XML** (Import für EvaSys). Beide sind voneinander unabhängig.
 
 **EvaSys-XML-Export:** Lecture-Inhalt im THL-Muster (`p_o_study`, `coursefield1`–`4`, `Person`, `Recipient`). Zeitsteuerung im aktuellen EvaSys-Schema: pro Umfrage eine `SurveyTaskList` mit `OpenSurveyTask`, `InviteParticipantsTask` (E-Mail an Teilnehmende), `RemindParticipantsTask` und `CloseSurveyTask`.
 
