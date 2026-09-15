@@ -60,7 +60,7 @@ Nutzer mit der Rolle **Evaluationsbeauftragte\*r** oder **Evaluations-Admin** se
 | Sprache | Dropdown Deutsch / Englisch |
 | Auswahl | Checkbox zur Beantragung |
 
-**Filter:** Dropdown aller Kursbereiche mit `requestevaluation`. Bei Auswahl werden nur Kurse in diesem Bereich und seinen Unterbereichen angezeigt.
+**Filter:** Durchsuchbares Kursbereichs-Dropdown (Moodle-`autocomplete`, wie in den Kurseinstellungen) aller Kursbereiche mit `requestevaluation`. Bei Auswahl und Bestätigung mit **Anzeigen** werden nur Kurse in diesem Bereich und seinen Unterbereichen angezeigt.
 
 **Sortierung:** Alle Spalten sind sortierbar (Klick auf Spaltenkopf). Gruppe, Sprache und Auswahl werden nach dem aktuellen Beantragungsstand der Zeile sortiert. Die Sortierung bleibt über die Session erhalten.
 
@@ -151,6 +151,8 @@ local/thlevasys/
 │   ├── evasys_xml_exporter.php
 │   ├── external/
 │   │   └── toggle_request.php
+│   ├── form/
+│   │   └── category_filter.php
 │   ├── output/
 │   │   ├── request_table.php
 │   │   ├── admin_request_table.php

@@ -43,17 +43,13 @@ class request_helper {
         $userid = $userid ?? $USER->id;
         $options = [];
 
-        // Keep the usual category tree order from make_categories_list().
-        foreach (\core_course_category::make_categories_list() as $categoryid => $unusedname) {
+        // Keep the usual category tree order and hierarchical names from make_categories_list().
+        foreach (\core_course_category::make_categories_list() as $categoryid => $name) {
             $context = \context_coursecat::instance($categoryid);
             if (!has_capability('local/thlevasys:requestevaluation', $context, $userid)) {
                 continue;
             }
-            $category = \core_course_category::get($categoryid, IGNORE_MISSING, true);
-            if (!$category) {
-                continue;
-            }
-            $options[$categoryid] = $category->get_formatted_name();
+            $options[$categoryid] = $name;
         }
 
         return $options;

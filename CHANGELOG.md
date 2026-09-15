@@ -11,6 +11,10 @@ Versionierung: Plugin-`release` sowie Moodle-`version` (`YYYYMMDDXX`).
 
 - CSV-Export des Tabelleninhalts (Admin-Übersicht und Beantragungstabelle) als Excel-taugliche Datei (Semikolon, UTF-8-BOM) über Moodles `csv_export_writer`; unabhängig vom EvaSys-XML-Export
 
+### Geändert
+
+- Kursbereichsfilter der Beantragungsseite als durchsuchbares Autocomplete-Feld (wie in den Kurseinstellungen)
+
 ## [0.4.0] - 2026-08-31
 
 Plugin-Version: `2026083100` · Maturity: Alpha

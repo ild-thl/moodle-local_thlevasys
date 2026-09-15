@@ -38,12 +38,12 @@ class request_table {
      * Render category filter and request table.
      *
      * @param int $filtercategoryid Currently selected category id (0 = all).
+     * @param \local_thlevasys\form\category_filter|null $filterform Searchable category filter form.
      * @return string HTML
      */
-    public function render(int $filtercategoryid = 0): string {
+    public function render(int $filtercategoryid = 0, ?\local_thlevasys\form\category_filter $filterform = null): string {
         global $OUTPUT, $USER;
 
-        $categories = \local_thlevasys\request_helper::get_filter_categories();
         $html = '';
 
         $baseurl = new \moodle_url('/local/thlevasys/request.php');
@@ -51,21 +51,9 @@ class request_table {
             $baseurl->param('categoryid', $filtercategoryid);
         }
 
-        $filteroptions = [0 => get_string('filter_allcategories', 'local_thlevasys')] + $categories;
-        if (!isset($filteroptions[$filtercategoryid])) {
-            $filtercategoryid = 0;
+        if ($filterform) {
+            $html .= \html_writer::div($filterform->render(), 'local-thlevasys-category-filter mb-3');
         }
-
-        $select = new \single_select(
-            new \moodle_url('/local/thlevasys/request.php'),
-            'categoryid',
-            $filteroptions,
-            $filtercategoryid,
-            null
-        );
-        $select->set_label(get_string('filter_category', 'local_thlevasys'));
-        $select->class = 'local-thlevasys-category-filter mb-3';
-        $html .= $OUTPUT->render($select);
 
         $rows = \local_thlevasys\request_helper::get_table_rows($filtercategoryid);
         if (empty($rows)) {
