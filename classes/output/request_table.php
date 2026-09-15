@@ -104,6 +104,7 @@ class request_table {
         $table->define_baseurl($baseurl);
         $table->sortable(true, 'coursename', SORT_ASC);
         $table->collapsible(false);
+        $table->responsive = false;
         $table->column_class('selected', 'text-center');
         $table->attributes['class'] = 'generaltable local-thlevasys-request-table';
         $table->attributes['id'] = 'local-thlevasys-request-table';

@@ -3,6 +3,7 @@
 .path-local-thlevasys .local-thlevasys-request-wrapper {
     width: 100%;
     max-width: 100%;
+    overflow-x: hidden;
 }
 
 .path-local-thlevasys .local-thlevasys-request-table.generaltable {
