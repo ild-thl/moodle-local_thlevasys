@@ -13,7 +13,7 @@ Versionierung: Plugin-`release` sowie Moodle-`version` (`YYYYMMDDXX`).
 
 ### Geändert
 
-- Kursbereichsfilter der Beantragungsseite als durchsuchbares Autocomplete-Feld (wie in den Kurseinstellungen)
+- Kursbereichsfilter der Beantragungsseite als durchsuchbares Autocomplete-Feld (wie in den Kurseinstellungen); Tabelle aktualisiert sich unmittelbar nach Auswahl
 
 ## [0.4.0] - 2026-08-31
 

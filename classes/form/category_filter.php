@@ -52,7 +52,5 @@ class category_filter extends \moodleform {
         );
         $mform->setType('categoryid', PARAM_INT);
         $mform->setDefault('categoryid', 0);
-
-        $this->add_action_buttons(false, get_string('show'));
     }
 }

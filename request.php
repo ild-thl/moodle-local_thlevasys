@@ -60,13 +60,6 @@ $filterform = new \local_thlevasys\form\category_filter(
     ['options' => $filteroptions]
 );
 $filterform->set_data(['categoryid' => $categoryid]);
-if ($filterdata = $filterform->get_data()) {
-    $selectedcategoryid = (int) ($filterdata->categoryid ?? 0);
-    redirect(new moodle_url(
-        '/local/thlevasys/request.php',
-        $selectedcategoryid ? ['categoryid' => $selectedcategoryid] : []
-    ));
-}
 
 echo $OUTPUT->header();
 
@@ -80,5 +73,6 @@ $table = new \local_thlevasys\output\request_table();
 echo $table->render($categoryid, $filterform);
 
 $PAGE->requires->js_call_amd('local_thlevasys/toggle_request', 'init');
+$PAGE->requires->js_call_amd('local_thlevasys/category_filter', 'init');
 
 echo $OUTPUT->footer();
