@@ -10,6 +10,7 @@ Versionierung: Plugin-`release` sowie Moodle-`version` (`YYYYMMDDXX`).
 ### Hinzugefügt
 
 - CSV-Export des Tabelleninhalts (Admin-Übersicht und Beantragungstabelle) als Excel-taugliche Datei (Semikolon, UTF-8-BOM) über Moodles `csv_export_writer`; unabhängig vom EvaSys-XML-Export
+- Suchfeld zum Filtern des Tabelleninhalts auch auf der Beantragungsseite für Evaluationsbeauftragte
 
 ### Geändert
 

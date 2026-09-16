@@ -10,12 +10,16 @@
  * Navigate to the request page with the selected category filter.
  *
  * @param {string} categoryid Selected category id ("0" or "" = all).
+ * @param {string} search Optional current search term to preserve.
  */
-const navigateToCategory = (categoryid) => {
+const navigateToCategory = (categoryid, search) => {
     const url = new URL(window.location.href);
     url.search = '';
     if (categoryid && categoryid !== '0') {
         url.searchParams.set('categoryid', categoryid);
+    }
+    if (search) {
+        url.searchParams.set('search', search);
     }
     window.location.assign(url.toString());
 };
@@ -45,9 +49,11 @@ export const init = () => {
             document.activeElement.blur();
         }
 
+        const search = new URL(window.location.href).searchParams.get('search') || '';
+
         // Defer navigation until after autocomplete finishes its async close/update work.
         window.setTimeout(() => {
-            navigateToCategory(select.value);
+            navigateToCategory(select.value, search);
         }, 50);
     });
 };

@@ -62,11 +62,13 @@ Nutzer mit der Rolle **Evaluationsbeauftragte\*r** oder **Evaluations-Admin** se
 
 **Filter:** Durchsuchbares Kursbereichs-Dropdown (Moodle-`autocomplete`, wie in den Kurseinstellungen) aller Kursbereiche mit `requestevaluation`. Nach Auswahl wird die Tabelle sofort aktualisiert; angezeigt werden nur Kurse in diesem Bereich und seinen Unterbereichen.
 
+**Suche:** Suchfeld über der Tabelle filtert den Tabelleninhalt (wie in der Admin-Übersicht).
+
 **Sortierung:** Alle Spalten sind sortierbar (Klick auf Spaltenkopf). Gruppe, Sprache und Auswahl werden nach dem aktuellen Beantragungsstand der Zeile sortiert. Die Sortierung bleibt über die Session erhalten.
 
 **Paginierung:** Maximal 10 Einträge pro Seite.
 
-**CSV-Export:** Button **CSV** direkt über der Tabelle. Exportiert den aktuellen Tabelleninhalt (inkl. Kursbereich-Filter und aktuellem Auswahlstand) als Excel-taugliche CSV (Semikolon, UTF-8-BOM) über Moodles `csv_export_writer`, unabhängig vom EvaSys-XML-Export.
+**CSV-Export:** Button **CSV** links neben dem Suchfeld. Exportiert den aktuellen Tabelleninhalt (inkl. Kursbereich-Filter, Suche und aktuellem Auswahlstand) als Excel-taugliche CSV (Semikolon, UTF-8-BOM) über Moodles `csv_export_writer`, unabhängig vom EvaSys-XML-Export.
 
 **Auswahl speichern:** Beim Setzen der Checkbox wird sofort ein Datensatz in `local_thlevasys_requests` angelegt (AJAX). Beim Entfernen wird der Datensatz gelöscht. Änderungen an Gruppe/Sprache bei gesetzter Checkbox aktualisieren den Datensatz. Bestehende Beantragungen des aktuellen Nutzers werden vorausgewählt.
 

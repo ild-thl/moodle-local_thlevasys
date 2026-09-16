@@ -39,26 +39,32 @@ class request_table {
      *
      * @param int $filtercategoryid Currently selected category id (0 = all).
      * @param \local_thlevasys\form\category_filter|null $filterform Searchable category filter form.
+     * @param string $search Optional search term for filtering table rows.
      * @return string HTML
      */
-    public function render(int $filtercategoryid = 0, ?\local_thlevasys\form\category_filter $filterform = null): string {
+    public function render(
+        int $filtercategoryid = 0,
+        ?\local_thlevasys\form\category_filter $filterform = null,
+        string $search = ''
+    ): string {
         global $OUTPUT, $USER;
 
         $html = '';
+        $search = trim($search);
 
         $baseurl = new \moodle_url('/local/thlevasys/request.php');
+        $searchurl = clone $baseurl;
+        $hiddenparams = [];
         if ($filtercategoryid) {
             $baseurl->param('categoryid', $filtercategoryid);
+            $hiddenparams['categoryid'] = $filtercategoryid;
+        }
+        if ($search !== '') {
+            $baseurl->param('search', $search);
         }
 
         if ($filterform) {
             $html .= \html_writer::div($filterform->render(), 'local-thlevasys-category-filter mb-3');
-        }
-
-        $rows = \local_thlevasys\request_helper::get_table_rows($filtercategoryid);
-        if (empty($rows)) {
-            $html .= $OUTPUT->notification(get_string('requesttable_empty', 'local_thlevasys'), 'info');
-            return $html;
         }
 
         $csvurl = new \moodle_url('/local/thlevasys/export_csv.php', [
@@ -68,17 +74,45 @@ class request_table {
         if ($filtercategoryid) {
             $csvurl->param('categoryid', $filtercategoryid);
         }
-        $html .= \html_writer::div(
-            \html_writer::link(
-                $csvurl,
-                get_string('export_table_csv', 'local_thlevasys'),
-                ['class' => 'btn btn-secondary']
-            ),
-            'local-thlevasys-table-csv-export mb-3'
-        );
+        if ($search !== '') {
+            $csvurl->param('search', $search);
+        }
+
+        $html .= table_search::render($searchurl, $search, $hiddenparams, false, $csvurl);
+
+        $rows = \local_thlevasys\request_helper::get_table_rows($filtercategoryid);
+        if (empty($rows) && $search === '') {
+            $html .= $OUTPUT->notification(get_string('requesttable_empty', 'local_thlevasys'), 'info');
+            return $html;
+        }
 
         $existing = \local_thlevasys\request_repository::get_requests_for_user((int) $USER->id);
         $rows = $this->enrich_rows_for_sorting($rows, $existing);
+        foreach ($rows as $row) {
+            $row->langlabel = \local_thlevasys\request_helper::format_language_label($row->lang);
+            $row->selectedlabel = !empty($row->selected) ? get_string('yes') : get_string('no');
+        }
+
+        $rows = \local_thlevasys\request_helper::filter_table_rows_by_search($rows, $search, [
+            'courseid',
+            'courseidnumber',
+            'coursename',
+            'teachername',
+            'participantcount',
+            'groupname',
+            'langlabel',
+            'selectedlabel',
+        ]);
+
+        if (empty($rows)) {
+            $html .= $OUTPUT->notification(
+                $search !== ''
+                    ? get_string('requesttable_search_empty', 'local_thlevasys')
+                    : get_string('requesttable_empty', 'local_thlevasys'),
+                'info'
+            );
+            return $html;
+        }
 
         $table = new bottom_paging_table('local-thlevasys-requests');
         $table->define_columns([

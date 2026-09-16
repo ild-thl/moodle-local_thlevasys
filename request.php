@@ -35,9 +35,16 @@ if (\local_thlevasys\access::is_evaluation_admin()) {
 }
 
 $categoryid = optional_param('categoryid', 0, PARAM_INT);
+$search = optional_param('search', '', PARAM_RAW_TRIMMED);
 
 $pagetitle = get_string('requestevaluation', 'local_thlevasys');
-$url = new moodle_url('/local/thlevasys/request.php', $categoryid ? ['categoryid' => $categoryid] : []);
+$url = new moodle_url('/local/thlevasys/request.php');
+if ($categoryid) {
+    $url->param('categoryid', $categoryid);
+}
+if ($search !== '') {
+    $url->param('search', $search);
+}
 
 $PAGE->set_url($url);
 $PAGE->set_context(context_system::instance());
@@ -70,7 +77,7 @@ if (!\local_thlevasys\access::can_submit_request_now()) {
 }
 
 $table = new \local_thlevasys\output\request_table();
-echo $table->render($categoryid, $filterform);
+echo $table->render($categoryid, $filterform, $search);
 
 $PAGE->requires->js_call_amd('local_thlevasys/toggle_request', 'init');
 $PAGE->requires->js_call_amd('local_thlevasys/category_filter', 'init');

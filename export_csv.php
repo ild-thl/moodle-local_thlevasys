@@ -113,6 +113,7 @@ if ($scope === 'request') {
     }
 
     $categoryid = optional_param('categoryid', 0, PARAM_INT);
+    $search = optional_param('search', '', PARAM_RAW_TRIMMED);
     if ($categoryid && !\local_thlevasys\request_helper::can_request_in_category($categoryid)) {
         throw new moodle_exception('error_requestnotavailable', 'local_thlevasys');
     }
@@ -131,6 +132,20 @@ if ($scope === 'request') {
     $rows = \local_thlevasys\request_helper::get_table_rows($categoryid);
     $existing = \local_thlevasys\request_repository::get_requests_for_user((int) $USER->id);
     $rows = (new \local_thlevasys\output\request_table())->enrich_rows_for_sorting($rows, $existing);
+    foreach ($rows as $row) {
+        $row->langlabel = \local_thlevasys\request_helper::format_language_label($row->lang);
+        $row->selectedlabel = !empty($row->selected) ? get_string('yes') : get_string('no');
+    }
+    $rows = \local_thlevasys\request_helper::filter_table_rows_by_search($rows, trim($search), [
+        'courseid',
+        'courseidnumber',
+        'coursename',
+        'teachername',
+        'participantcount',
+        'groupname',
+        'langlabel',
+        'selectedlabel',
+    ]);
     $rows = \local_thlevasys\request_helper::sort_table_rows($rows, ['coursename' => SORT_ASC]);
 
     local_thlevasys_download_excel_csv(

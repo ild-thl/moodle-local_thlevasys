@@ -37,14 +37,16 @@ class table_search {
      * @param \moodle_url $actionurl Form action URL (without search param).
      * @param string $search Current search term.
      * @param array $hiddenparams Additional hidden GET parameters.
-     * @param bool $showexportlink Whether to show the EvaSys XML export link.
+     * @param bool $showxmlexport Whether to show the EvaSys XML export button.
+     * @param \moodle_url|null $csvurl Optional CSV export URL (shown left of XML/search).
      * @return string HTML
      */
     public static function render(
         \moodle_url $actionurl,
         string $search,
         array $hiddenparams = [],
-        bool $showexportlink = false
+        bool $showxmlexport = false,
+        ?\moodle_url $csvurl = null
     ): string {
         $formid = 'local-thlevasys-table-search';
         $html = \html_writer::start_tag('form', [
@@ -66,14 +68,7 @@ class table_search {
         }
 
         $html .= \html_writer::start_div('d-flex flex-wrap align-items-center');
-        if ($showexportlink) {
-            $csvurl = new \moodle_url('/local/thlevasys/export_csv.php', [
-                'scope' => 'admin',
-                'sesskey' => sesskey(),
-            ]);
-            if ($search !== '') {
-                $csvurl->param('search', $search);
-            }
+        if ($csvurl !== null) {
             $html .= \html_writer::link(
                 $csvurl,
                 get_string('export_table_csv', 'local_thlevasys'),
@@ -82,6 +77,8 @@ class table_search {
                     'style' => 'margin-left: 0.25rem; margin-right: 0.5rem;',
                 ]
             );
+        }
+        if ($showxmlexport) {
             $html .= \html_writer::empty_tag('input', [
                 'type' => 'submit',
                 'class' => 'btn btn-secondary me-3',
@@ -111,6 +108,12 @@ class table_search {
         if ($search !== '') {
             $clearurl = clone $actionurl;
             $clearurl->remove_params(['search', 'page']);
+            foreach ($hiddenparams as $name => $value) {
+                if ($value === '' || $value === null) {
+                    continue;
+                }
+                $clearurl->param($name, $value);
+            }
             $html .= \html_writer::div(
                 \html_writer::link(
                     $clearurl,

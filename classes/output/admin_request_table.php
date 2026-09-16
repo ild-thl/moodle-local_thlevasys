@@ -70,7 +70,15 @@ class admin_request_table {
             $baseurl->param('search', $search);
         }
 
-        $html .= table_search::render($tablebaseurl, $search, [], true);
+        $csvurl = new \moodle_url('/local/thlevasys/export_csv.php', [
+            'scope' => 'admin',
+            'sesskey' => sesskey(),
+        ]);
+        if ($search !== '') {
+            $csvurl->param('search', $search);
+        }
+
+        $html .= table_search::render($tablebaseurl, $search, [], true, $csvurl);
 
         $rows = \local_thlevasys\request_helper::get_admin_table_rows();
         if (empty($rows) && $search === '') {
