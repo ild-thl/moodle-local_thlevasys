@@ -79,7 +79,7 @@ class table_search {
                 get_string('export_table_csv', 'local_thlevasys'),
                 [
                     'class' => 'btn btn-secondary',
-                    'style' => 'margin-right: 0.5rem;',
+                    'style' => 'margin-left: 0.25rem; margin-right: 0.5rem;',
                 ]
             );
             $html .= \html_writer::empty_tag('input', [

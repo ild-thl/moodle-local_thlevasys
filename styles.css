@@ -141,6 +141,7 @@
     flex-direction: column;
     gap: 0.75rem;
     max-width: 28rem;
+    margin: 0.25rem;
 }
 
 .path-local-thlevasys .local-thlevasys-export-field .form-control {
