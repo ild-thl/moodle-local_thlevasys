@@ -15,6 +15,9 @@ Versionierung: Plugin-`release` sowie Moodle-`version` (`YYYYMMDDXX`).
 ### Geändert
 
 - Kursbereichsfilter der Beantragungsseite als durchsuchbares Autocomplete-Feld (wie in den Kurseinstellungen); Tabelle aktualisiert sich unmittelbar nach Auswahl
+- EvaSys-XML: Teilnehmende in `InviteParticipantsTask` per `ParticipantEmail` (statt unverbundener `Recipient`-Refs)
+- EvaSys-XML: `EmailText` entfernt (EvaSys-Textvorlagen)
+- EvaSys-XML: `NotifyResponseRateTask` ergänzt; neues Admin-Feld **Rücklauferinnerung**
 
 ## [0.4.0] - 2026-08-31
 

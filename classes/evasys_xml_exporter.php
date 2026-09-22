@@ -59,13 +59,17 @@ class evasys_xml_exporter {
 
         $starttime = self::format_evasys_datetime($options['evaluationstart']);
         $remindertime = self::format_evasys_datetime($options['evaluationreminder']);
+        $responseratetime = self::format_evasys_datetime($options['evaluationresponserate']);
         $endtime = self::format_evasys_datetime($options['evaluationend']);
 
         if ($remindertime <= $starttime) {
             throw new \moodle_exception('error_export_reminderbeforestart', 'local_thlevasys');
         }
-        if ($endtime <= $remindertime) {
-            throw new \moodle_exception('error_export_endbeforereminder', 'local_thlevasys');
+        if ($responseratetime <= $remindertime) {
+            throw new \moodle_exception('error_export_responseratebeforereminder', 'local_thlevasys');
+        }
+        if ($endtime <= $responseratetime) {
+            throw new \moodle_exception('error_export_endbeforeresponserate', 'local_thlevasys');
         }
 
         $invitetime = self::add_minutes_to_evasys_datetime($starttime, 1);
@@ -77,12 +81,11 @@ class evasys_xml_exporter {
         $dom->appendChild($root);
 
         $persons = [];
-        $recipients = [];
         $tasklists = [];
         $exported = 0;
 
         foreach ($requests as $request) {
-            $lecturedata = self::build_lecture_data($request, $options, $persons, $recipients);
+            $lecturedata = self::build_lecture_data($request, $options, $persons);
             if ($lecturedata === null) {
                 continue;
             }
@@ -135,7 +138,7 @@ class evasys_xml_exporter {
 
             $tasklists[] = [
                 'key' => $tasklistkey,
-                'recipientkeys' => $lecturedata['recipientkeys'],
+                'participantemails' => $lecturedata['participantemails'],
             ];
             $exported++;
         }
@@ -164,16 +167,10 @@ class evasys_xml_exporter {
                 $starttime,
                 $invitetime,
                 $remindertime,
+                $responseratetime,
                 $endtime,
-                $tasklist['recipientkeys']
+                $tasklist['participantemails']
             );
-        }
-
-        foreach ($recipients as $recipientkey => $recipientdata) {
-            $recipient = $dom->createElement('Recipient');
-            $recipient->setAttribute('key', $recipientkey);
-            $root->appendChild($recipient);
-            self::append_text($dom, $recipient, 'email', $recipientdata['email']);
         }
 
         return $dom->saveXML();
@@ -192,7 +189,7 @@ class evasys_xml_exporter {
         if (trim((string) ($options['questionnaireen'] ?? '')) === '') {
             throw new \moodle_exception('error_export_questionnaire_en_required', 'local_thlevasys');
         }
-        foreach (['evaluationstart', 'evaluationreminder', 'evaluationend'] as $field) {
+        foreach (['evaluationstart', 'evaluationreminder', 'evaluationresponserate', 'evaluationend'] as $field) {
             if (trim((string) ($options[$field] ?? '')) === '') {
                 throw new \moodle_exception('error_export_daterequired', 'local_thlevasys');
             }
@@ -203,14 +200,12 @@ class evasys_xml_exporter {
      * @param \stdClass $request Request record.
      * @param array $options Export options.
      * @param array $persons Collected person records (by ref).
-     * @param array $recipients Collected recipient records (by ref).
      * @return array|null Lecture data or null if the request cannot be exported.
      */
     protected static function build_lecture_data(
         \stdClass $request,
         array $options,
-        array &$persons,
-        array &$recipients
+        array &$persons
     ): ?array {
         $course = get_course($request->courseid, false);
         if (!$course) {
@@ -241,7 +236,7 @@ class evasys_xml_exporter {
             ];
         }
 
-        $recipientkeys = [];
+        $participantemails = [];
         $enrolledusers = request_helper::get_student_participants($coursecontext, $groupid);
         foreach ($enrolledusers as $user) {
             if (empty($user->email)) {
@@ -250,14 +245,7 @@ class evasys_xml_exporter {
             if ((int) $user->id === (int) $teacher->id) {
                 continue;
             }
-
-            $recipientkey = 'R' . (int) $user->id;
-            if (!isset($recipients[$recipientkey])) {
-                $recipients[$recipientkey] = [
-                    'email' => $user->email,
-                ];
-            }
-            $recipientkeys[] = $recipientkey;
+            $participantemails[] = (string) $user->email;
         }
 
         $questionnaire = $request->lang === 'en'
@@ -276,7 +264,7 @@ class evasys_xml_exporter {
             'coursefield2' => 'Online',
             'coursefield3' => (string) (int) $request->courseid,
             'coursefield4' => (string) $groupid,
-            'recipientkeys' => $recipientkeys,
+            'participantemails' => $participantemails,
             'questionnaire' => $questionnaire,
         ];
     }
@@ -363,9 +351,10 @@ class evasys_xml_exporter {
      * @param string $tasklistkey Task list key.
      * @param string $starttime Open time.
      * @param string $invitetime Invite time.
-     * @param string $remindertime Reminder time.
+     * @param string $remindertime Participant reminder time.
+     * @param string $responseratetime Response-rate notification time.
      * @param string $endtime Close time.
-     * @param string[] $recipientkeys Recipient keys for this lecture.
+     * @param string[] $participantemails Participant email addresses for this lecture.
      */
     protected static function append_task_list(
         \DOMDocument $dom,
@@ -374,8 +363,9 @@ class evasys_xml_exporter {
         string $starttime,
         string $invitetime,
         string $remindertime,
+        string $responseratetime,
         string $endtime,
-        array $recipientkeys
+        array $participantemails
     ): void {
         $tasklist = $dom->createElement('SurveyTaskList');
         $tasklist->setAttribute('key', $tasklistkey);
@@ -393,14 +383,12 @@ class evasys_xml_exporter {
         self::append_text($dom, $invite, 'SenderName', self::SENDER_NAME);
         self::append_text($dom, $invite, 'SenderEmail', self::SENDER_EMAIL);
         self::append_text($dom, $invite, 'EmailSubject', self::MAIL_SUBJECT);
-        self::append_text($dom, $invite, 'EmailText', self::get_dispatch_mail_text());
+        // EmailText intentionally omitted – EvaSys uses its configured templates.
 
         $inviterecipients = $dom->createElement('Recipients');
         $invite->appendChild($inviterecipients);
-        foreach ($recipientkeys as $recipientkey) {
-            $recipient = $dom->createElement('recipient');
-            $inviterecipients->appendChild($recipient);
-            self::append_ref($dom, $recipient, 'Recipient', $recipientkey);
+        foreach ($participantemails as $email) {
+            self::append_text($dom, $inviterecipients, 'ParticipantEmail', $email);
         }
 
         $remind = $dom->createElement('RemindParticipantsTask');
@@ -410,63 +398,17 @@ class evasys_xml_exporter {
         self::append_text($dom, $remind, 'SenderName', self::SENDER_NAME);
         self::append_text($dom, $remind, 'SenderEmail', self::SENDER_EMAIL);
         self::append_text($dom, $remind, 'EmailSubject', self::MAIL_SUBJECT);
-        self::append_text($dom, $remind, 'EmailText', self::get_remind_mail_text());
+        // EmailText intentionally omitted – EvaSys uses its configured templates.
+
+        $responserate = $dom->createElement('NotifyResponseRateTask');
+        $tasklist->appendChild($responserate);
+        self::append_text($dom, $responserate, 'StartTime', $responseratetime);
+        self::append_text($dom, $responserate, 'QuoteInPercent', '100');
+        self::append_text($dom, $responserate, 'CalculationMethod', '1');
 
         $close = $dom->createElement('CloseSurveyTask');
         $tasklist->appendChild($close);
         self::append_text($dom, $close, 'StartTime', $endtime);
-    }
-
-    /**
-     * Invitation mail body (THL template).
-     *
-     * @return string
-     */
-    protected static function get_dispatch_mail_text(): string {
-        return "Liebe Studierende,\\n\n" .
-            "\\n\n" .
-            "Sie sind hiermit zur Stimmabgabe bei einer Online-Befragung der Technischen Hochschule Lübeck berechtigt. " .
-            "Ihre Meinung ist uns wichtig, wir freuen uns über Ihre Rückmeldung.\\n " .
-            "Lehrveranstaltung: [SURVEY] \\n Lehrperson: [FIRSTNAME] [SURNAME]\\n\n" .
-            "Bitte folgen Sie dem Link, um den Fragebogen zu öffnen.\\n\n" .
-            "\\n\n" .
-            "[DIRECT_ONLINE_LINK]\\n\n" .
-            "\\n\n" .
-            "\\n\n" .
-            "Mit freundlichen Grüßen,\\n\n" .
-            "\\n\n" .
-            "Das Evaluationsteam der Technischen Hochschule Lübeck\n" .
-            "\\n \n" .
-            "---------------------- \n" .
-            "\\n \n" .
-            "HINWEIS: Diese E-Mail wurde automatisch generiert. Die in dieser E-Mail angegebene TAN ist nicht mit Ihrer " .
-            "Person verbunden. Ihre Stimmabgabe erfolgt anonym.";
-    }
-
-    /**
-     * Reminder mail body (THL template).
-     *
-     * @return string
-     */
-    protected static function get_remind_mail_text(): string {
-        return "Liebe Studierende,\\n\n" .
-            "\\n\n" .
-            "wir möchten Sie daran erinnern, dass Sie noch eine Woche bei einer Online-Befragung der Technischen " .
-            "Hochschule Lübeck teilnehmen können. Ihre Meinung ist uns wichtig, wir freuen uns über Ihre Rückmeldung.\\n " .
-            "Lehrveranstaltung: [SURVEY] \\n Lehrperson: [FIRSTNAME] [SURNAME]\\n\n" .
-            "Bitte folgen Sie dem Link, um den Fragebogen zu öffnen.\\n\n" .
-            "\\n\n" .
-            "[DIRECT_ONLINE_LINK]\\n\n" .
-            "\\n\n" .
-            "\\n\n" .
-            "Mit freundlichen Grüßen,\\n\n" .
-            "\\n\n" .
-            "Das Evaluationsteam der Technischen Hochschule Lübeck\n" .
-            "\\n \n" .
-            "---------------------- \n" .
-            "\\n \n" .
-            "HINWEIS: Diese E-Mail wurde automatisch generiert. Die in dieser E-Mail angegebene TAN ist nicht mit Ihrer " .
-            "Person verbunden. Ihre Stimmabgabe erfolgt anonym.";
     }
 
     /**

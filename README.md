@@ -103,9 +103,9 @@ Unter `/local/thlevasys/admin_requests.php` sieht der Evaluations-Admin alle Bea
 
 Sortierung nach allen Spalten (Standard: LV-Name aufsteigend), Paginierung mit 10 Einträgen pro Seite, Suchfeld zum Filtern des Tabelleninhalts.
 
-Oberhalb der Tabelle stehen Export-Einstellungsfelder (Evaluations-Beginn, Evaluations-Erinnerung, Evaluations-Ende, Semester, Fragebogen DE/EN). Die Felder werden nicht gespeichert. Links neben dem Suchfeld: Button **CSV für Excel** (Tabelleninhalt inkl. aktiver Suche, Semikolon/UTF-8-BOM für Excel) und **EvaSys XML** (Import für EvaSys). Beide sind voneinander unabhängig.
+Oberhalb der Tabelle stehen Export-Einstellungsfelder (Evaluations-Beginn, Evaluations-Erinnerung, Rücklauferinnerung, Evaluations-Ende, Semester, Fragebogen DE/EN). Die Felder werden nicht gespeichert. Links neben dem Suchfeld: Button **CSV für Excel** (Tabelleninhalt inkl. aktiver Suche, Semikolon/UTF-8-BOM für Excel) und **EvaSys XML** (Import für EvaSys). Beide sind voneinander unabhängig.
 
-**EvaSys-XML-Export:** Lecture-Inhalt im THL-Muster (`p_o_study`, `coursefield1`–`4`, `Person`, `Recipient`). Zeitsteuerung im aktuellen EvaSys-Schema: pro Umfrage eine `SurveyTaskList` mit `OpenSurveyTask`, `InviteParticipantsTask` (E-Mail an Teilnehmende), `RemindParticipantsTask` und `CloseSurveyTask`.
+**EvaSys-XML-Export:** Lecture-Inhalt im THL-Muster (`p_o_study`, `coursefield1`–`4`, `Person`). Zeitsteuerung im aktuellen EvaSys-Schema: pro Umfrage eine `SurveyTaskList` mit `OpenSurveyTask`, `InviteParticipantsTask` (Teilnehmende per `ParticipantEmail`, ohne `EmailText` – EvaSys-Vorlagen), `RemindParticipantsTask`, `NotifyResponseRateTask` (Quote 100 %, CalculationMethod 1) und `CloseSurveyTask`.
 
 ### Rolle Evaluationsbeauftragte\*r zuweisen
 

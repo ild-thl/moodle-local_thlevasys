@@ -54,6 +54,11 @@ class export_options {
 
         $html .= self::render_datetime_field('evaluationstart', get_string('export_evalstart', 'local_thlevasys'), $now);
         $html .= self::render_datetime_field('evaluationreminder', get_string('export_evalreminder', 'local_thlevasys'), $now);
+        $html .= self::render_datetime_field(
+            'evaluationresponserate',
+            get_string('export_evalresponserate', 'local_thlevasys'),
+            $now
+        );
         $html .= self::render_datetime_field('evaluationend', get_string('export_evalend', 'local_thlevasys'), $now);
         $html .= self::render_text_field('semester', get_string('export_semester', 'local_thlevasys'));
         $html .= self::render_text_field('questionnairede', get_string('export_questionnaire_de', 'local_thlevasys'));

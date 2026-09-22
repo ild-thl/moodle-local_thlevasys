@@ -35,6 +35,7 @@ if (!\local_thlevasys\access::is_evaluation_admin()) {
 $options = [
     'evaluationstart' => required_param('evaluationstart', PARAM_RAW_TRIMMED),
     'evaluationreminder' => required_param('evaluationreminder', PARAM_RAW_TRIMMED),
+    'evaluationresponserate' => required_param('evaluationresponserate', PARAM_RAW_TRIMMED),
     'evaluationend' => required_param('evaluationend', PARAM_RAW_TRIMMED),
     'semester' => required_param('semester', PARAM_TEXT),
     'questionnairede' => required_param('questionnairede', PARAM_TEXT),
