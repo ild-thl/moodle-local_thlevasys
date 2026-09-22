@@ -34,8 +34,6 @@
 .path-local-thlevasys .local-thlevasys-request-table th:nth-child(3),
 .path-local-thlevasys .local-thlevasys-request-table td:nth-child(3) {
     width: 22%;
-    overflow-wrap: anywhere;
-    word-break: break-word;
 }
 
 .path-local-thlevasys .local-thlevasys-request-table th:nth-child(4),
@@ -101,38 +99,68 @@
     overflow: hidden;
 }
 
+/* Kurs-ID */
 .path-local-thlevasys .local-thlevasys-admin-request-table th:nth-child(1),
 .path-local-thlevasys .local-thlevasys-admin-request-table td:nth-child(1) {
-    width: 4.5rem;
+    width: 5%;
     white-space: nowrap;
 }
 
+/* Dozent*in */
 .path-local-thlevasys .local-thlevasys-admin-request-table th:nth-child(2),
-.path-local-thlevasys .local-thlevasys-admin-request-table td:nth-child(2),
+.path-local-thlevasys .local-thlevasys-admin-request-table td:nth-child(2) {
+    width: 12%;
+}
+
+/* E-Mail */
 .path-local-thlevasys .local-thlevasys-admin-request-table th:nth-child(3),
-.path-local-thlevasys .local-thlevasys-admin-request-table td:nth-child(3),
+.path-local-thlevasys .local-thlevasys-admin-request-table td:nth-child(3) {
+    width: 16%;
+}
+
+.path-local-thlevasys .local-thlevasys-admin-request-table td:nth-child(3) {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* LV-Name */
 .path-local-thlevasys .local-thlevasys-admin-request-table th:nth-child(4),
-.path-local-thlevasys .local-thlevasys-admin-request-table td:nth-child(4),
+.path-local-thlevasys .local-thlevasys-admin-request-table td:nth-child(4) {
+    width: 22%;
+}
+
+/* LV-Kennung */
 .path-local-thlevasys .local-thlevasys-admin-request-table th:nth-child(5),
 .path-local-thlevasys .local-thlevasys-admin-request-table td:nth-child(5) {
+    width: 10%;
     overflow-wrap: anywhere;
-    word-break: break-word;
 }
 
-.path-local-thlevasys .local-thlevasys-admin-request-table th:nth-child(5),
-.path-local-thlevasys .local-thlevasys-admin-request-table td:nth-child(5) {
-    width: 8rem;
-}
-
+/* Studiengang */
 .path-local-thlevasys .local-thlevasys-admin-request-table th:nth-child(6),
-.path-local-thlevasys .local-thlevasys-admin-request-table td:nth-child(6),
+.path-local-thlevasys .local-thlevasys-admin-request-table td:nth-child(6) {
+    width: 12%;
+    overflow-wrap: break-word;
+}
+
+/* LV-TN */
 .path-local-thlevasys .local-thlevasys-admin-request-table th:nth-child(7),
-.path-local-thlevasys .local-thlevasys-admin-request-table td:nth-child(7),
+.path-local-thlevasys .local-thlevasys-admin-request-table td:nth-child(7) {
+    width: 6%;
+    white-space: nowrap;
+}
+
+/* Gruppen-ID */
 .path-local-thlevasys .local-thlevasys-admin-request-table th:nth-child(8),
-.path-local-thlevasys .local-thlevasys-admin-request-table td:nth-child(8),
+.path-local-thlevasys .local-thlevasys-admin-request-table td:nth-child(8) {
+    width: 9%;
+    white-space: nowrap;
+}
+
+/* Sprache */
 .path-local-thlevasys .local-thlevasys-admin-request-table th:nth-child(9),
 .path-local-thlevasys .local-thlevasys-admin-request-table td:nth-child(9) {
-    width: 5rem;
+    width: 8%;
     white-space: nowrap;
 }
 
@@ -146,4 +174,23 @@
 
 .path-local-thlevasys .local-thlevasys-export-field .form-control {
     max-width: 100%;
+}
+
+/* LV-Name: max. 2 Zeilen, danach Ellipsis; voller Name per title-Attribut. */
+.path-local-thlevasys .local-thlevasys-coursename,
+.path-local-thlevasys .local-thlevasys-teachername {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.path-local-thlevasys .local-thlevasys-teacheremail {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }

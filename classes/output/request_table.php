@@ -204,7 +204,11 @@ class request_table {
     protected function render_course_link(\stdClass $row): string {
         return \html_writer::link(
             new \moodle_url('/course/view.php', ['id' => $row->courseid]),
-            $row->coursename
+            $row->coursename,
+            [
+                'class' => 'local-thlevasys-coursename',
+                'title' => $row->coursename,
+            ]
         );
     }
 

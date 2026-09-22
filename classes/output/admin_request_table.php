@@ -129,6 +129,7 @@ class admin_request_table {
         $table->define_baseurl($baseurl);
         $table->sortable(true, 'coursename', SORT_ASC);
         $table->collapsible(false);
+        $table->responsive = false;
         $table->attributes['class'] = 'generaltable local-thlevasys-admin-request-table';
         $table->attributes['id'] = 'local-thlevasys-admin-request-table';
         $table->setup();
@@ -141,7 +142,7 @@ class admin_request_table {
             $table->add_data([
                 $row->courseid,
                 $this->render_teacher_link($row),
-                s($row->teacheremail),
+                $this->render_teacher_email($row),
                 $this->render_course_link($row),
                 $row->courseidnumber,
                 $row->studiengang,
@@ -165,7 +166,11 @@ class admin_request_table {
     protected function render_course_link(\stdClass $row): string {
         return \html_writer::link(
             new \moodle_url('/course/view.php', ['id' => $row->courseid]),
-            $row->coursename
+            $row->coursename,
+            [
+                'class' => 'local-thlevasys-coursename',
+                'title' => $row->coursename,
+            ]
         );
     }
 
@@ -176,7 +181,21 @@ class admin_request_table {
     protected function render_teacher_link(\stdClass $row): string {
         return \html_writer::link(
             new \moodle_url('/user/view.php', ['id' => $row->teacherid, 'course' => $row->courseid]),
-            $row->teachername
+            $row->teachername,
+            [
+                'class' => 'local-thlevasys-teachername',
+                'title' => $row->teachername,
+            ]
         );
+    }
+
+    /**
+     * @param \stdClass $row Table row.
+     * @return string
+     */
+    protected function render_teacher_email(\stdClass $row): string {
+        return \html_writer::span(s($row->teacheremail), 'local-thlevasys-teacheremail', [
+            'title' => $row->teacheremail,
+        ]);
     }
 }
