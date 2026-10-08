@@ -61,18 +61,15 @@ class evasys_xml_exporter {
         $remindertime = self::format_evasys_datetime($options['evaluationreminder']);
         $responseratetime = self::format_evasys_datetime($options['evaluationresponserate']);
         $endtime = self::format_evasys_datetime($options['evaluationend']);
-
-        if ($remindertime <= $starttime) {
-            throw new \moodle_exception('error_export_reminderbeforestart', 'local_thlevasys');
-        }
-        if ($responseratetime <= $remindertime) {
-            throw new \moodle_exception('error_export_responseratebeforereminder', 'local_thlevasys');
-        }
-        if ($endtime <= $responseratetime) {
-            throw new \moodle_exception('error_export_endbeforeresponserate', 'local_thlevasys');
-        }
-
         $invitetime = self::add_minutes_to_evasys_datetime($starttime, 1);
+
+        // Both mid-period tasks must lie after start/invite and before end; their mutual order is free.
+        if ($remindertime <= $invitetime || $remindertime >= $endtime) {
+            throw new \moodle_exception('error_export_remindernotbetween', 'local_thlevasys');
+        }
+        if ($responseratetime <= $invitetime || $responseratetime >= $endtime) {
+            throw new \moodle_exception('error_export_responseratenotbetween', 'local_thlevasys');
+        }
 
         $dom = new \DOMDocument('1.0', 'UTF-8');
         $dom->formatOutput = true;
@@ -391,20 +388,34 @@ class evasys_xml_exporter {
             self::append_text($dom, $inviterecipients, 'ParticipantEmail', $email);
         }
 
-        $remind = $dom->createElement('RemindParticipantsTask');
-        $tasklist->appendChild($remind);
-        self::append_text($dom, $remind, 'StartTime', $remindertime);
-        self::append_text($dom, $remind, 'CombineMail', 'true');
-        self::append_text($dom, $remind, 'SenderName', self::SENDER_NAME);
-        self::append_text($dom, $remind, 'SenderEmail', self::SENDER_EMAIL);
-        self::append_text($dom, $remind, 'EmailSubject', self::MAIL_SUBJECT);
-        // EmailText intentionally omitted – EvaSys uses its configured templates.
+        // Emit mid-period tasks in chronological StartTime order (order of the two form fields is free).
+        $midtasks = [
+            ['time' => $remindertime, 'type' => 'remind'],
+            ['time' => $responseratetime, 'type' => 'responserate'],
+        ];
+        usort($midtasks, static function(array $a, array $b): int {
+            return strcmp($a['time'], $b['time']);
+        });
 
-        $responserate = $dom->createElement('NotifyResponseRateTask');
-        $tasklist->appendChild($responserate);
-        self::append_text($dom, $responserate, 'StartTime', $responseratetime);
-        self::append_text($dom, $responserate, 'QuoteInPercent', '100');
-        self::append_text($dom, $responserate, 'CalculationMethod', '1');
+        foreach ($midtasks as $midtask) {
+            if ($midtask['type'] === 'remind') {
+                $remind = $dom->createElement('RemindParticipantsTask');
+                $tasklist->appendChild($remind);
+                self::append_text($dom, $remind, 'StartTime', $remindertime);
+                self::append_text($dom, $remind, 'CombineMail', 'true');
+                self::append_text($dom, $remind, 'SenderName', self::SENDER_NAME);
+                self::append_text($dom, $remind, 'SenderEmail', self::SENDER_EMAIL);
+                self::append_text($dom, $remind, 'EmailSubject', self::MAIL_SUBJECT);
+                // EmailText intentionally omitted – EvaSys uses its configured templates.
+                continue;
+            }
+
+            $responserate = $dom->createElement('NotifyResponseRateTask');
+            $tasklist->appendChild($responserate);
+            self::append_text($dom, $responserate, 'StartTime', $responseratetime);
+            self::append_text($dom, $responserate, 'QuoteInPercent', '100');
+            self::append_text($dom, $responserate, 'CalculationMethod', '1');
+        }
 
         $close = $dom->createElement('CloseSurveyTask');
         $tasklist->appendChild($close);
