@@ -64,7 +64,8 @@ class admin_request_table {
         );
 
         $html .= export_options::render();
-        $html .= self::render_reset_button($OUTPUT);        $baseurl = new \moodle_url('/local/thlevasys/admin_requests.php');
+
+        $baseurl = new \moodle_url('/local/thlevasys/admin_requests.php');
         $tablebaseurl = clone $baseurl;
         if ($search !== '') {
             $baseurl->param('search', $search);
@@ -83,6 +84,7 @@ class admin_request_table {
         $rows = \local_thlevasys\request_helper::get_admin_table_rows();
         if (empty($rows) && $search === '') {
             $html .= $OUTPUT->notification(get_string('admin_requesttable_empty', 'local_thlevasys'), 'info');
+            $html .= self::render_reset_button($OUTPUT);
             return $html;
         }
 
@@ -100,6 +102,7 @@ class admin_request_table {
 
         if (empty($rows)) {
             $html .= $OUTPUT->notification(get_string('requesttable_search_empty', 'local_thlevasys'), 'info');
+            $html .= self::render_reset_button($OUTPUT);
             return $html;
         }
 
@@ -155,6 +158,7 @@ class admin_request_table {
         ob_start();
         $table->finish_output();
         $html .= \html_writer::div(ob_get_clean(), 'local-thlevasys-request-wrapper');
+        $html .= self::render_reset_button($OUTPUT);
 
         return $html;
     }
@@ -175,7 +179,7 @@ class admin_request_table {
 
         return \html_writer::div(
             $output->render($button),
-            'local-thlevasys-reset-requests mb-4'
+            'local-thlevasys-reset-requests mt-3 mb-4'
         );
     }
 
