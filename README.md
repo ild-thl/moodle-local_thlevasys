@@ -68,7 +68,7 @@ Nutzer mit der Rolle **Evaluationsbeauftragte\*r** oder **Evaluations-Admin** se
 
 **Paginierung:** Maximal 10 Einträge pro Seite.
 
-**CSV-Export:** Button **CSV für Excel** links neben dem Suchfeld. Exportiert den aktuellen Tabelleninhalt (inkl. Kursbereich-Filter, Suche und aktuellem Auswahlstand) als Excel-taugliche CSV (Semikolon, UTF-8-BOM) über Moodles `csv_export_writer`, unabhängig vom EvaSys-XML-Export.
+**CSV-Export:** Button **CSV für Excel** links neben dem Suchfeld. Exportiert nur die zur Beantragung ausgewählten Zeilen (gesetzte Checkbox), unter Berücksichtigung von Kursbereich-Filter und Suche, als Excel-taugliche CSV (Semikolon, UTF-8-BOM) über Moodles `csv_export_writer`, unabhängig vom EvaSys-XML-Export.
 
 **Auswahl speichern:** Beim Setzen der Checkbox wird sofort ein Datensatz in `local_thlevasys_requests` angelegt (AJAX). Beim Entfernen wird der Datensatz gelöscht. Änderungen an Gruppe/Sprache bei gesetzter Checkbox aktualisieren den Datensatz. Bestehende Beantragungen des aktuellen Nutzers werden vorausgewählt.
 
@@ -103,7 +103,7 @@ Unter `/local/thlevasys/admin_requests.php` sieht der Evaluations-Admin alle Bea
 
 Sortierung nach allen Spalten (Standard: LV-Name aufsteigend), Paginierung mit 10 Einträgen pro Seite, Suchfeld zum Filtern des Tabelleninhalts.
 
-Oberhalb der Tabelle stehen Export-Einstellungsfelder (Evaluations-Beginn, Rücklauferinnerung, Evaluations-Erinnerung, Evaluations-Ende, Semester, Fragebogen DE/EN). Die Felder werden nicht gespeichert. Rücklauferinnerung und Evaluations-Erinnerung müssen jeweils nach Beginn und vor Ende liegen; ihre Reihenfolge zueinander ist frei. Links neben dem Suchfeld: Button **CSV für Excel** (Tabelleninhalt inkl. aktiver Suche, Semikolon/UTF-8-BOM für Excel) und **EvaSys XML** (Import für EvaSys). Beide sind voneinander unabhängig.
+Oberhalb der Tabelle stehen Export-Einstellungsfelder (Evaluations-Beginn, Rücklauferinnerung, Evaluations-Erinnerung, Evaluations-Ende, Semester, Fragebogen DE/EN). Die Felder werden nicht gespeichert. Rücklauferinnerung und Evaluations-Erinnerung müssen jeweils nach Beginn und vor Ende liegen; ihre Reihenfolge zueinander ist frei. Links neben dem Suchfeld: Button **CSV für Excel** (beantragte Evaluationen inkl. aktiver Suche, Semikolon/UTF-8-BOM für Excel) und **EvaSys XML** (Import für EvaSys). Beide sind voneinander unabhängig.
 
 **Beantragungen zurücksetzen:** Button unter der Tabelle zum Löschen **aller** Beantragungen (mit Bestätigungsseite). Danach können Beauftragte im aktuellen Zeitraum neu beantragen. Sinnvoll vor einem neuen Beantragungszeitraum.
 

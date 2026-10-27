@@ -15,11 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Download table contents as Excel-friendly CSV.
+ * Download evaluation requests as Excel-friendly CSV.
  *
- * Independent of the EvaSys XML export – only mirrors the visible table data.
- * Uses Moodle csv_export_writer with semicolon separator and UTF-8 BOM so
- * German Excel opens values in separate columns.
+ * Independent of the EvaSys XML export. Officer export includes only rows
+ * selected for request (checkbox); admin export includes submitted requests
+ * in the configured period. Uses Moodle csv_export_writer with semicolon
+ * separator and UTF-8 BOM so German Excel opens values in separate columns.
  *
  * @package    local_thlevasys
  * @copyright  2026 Jan Rieger <jan.rieger@th-luebeck.de>
@@ -126,15 +127,16 @@ if ($scope === 'request') {
         get_string('col_participants', 'local_thlevasys'),
         get_string('col_group', 'local_thlevasys'),
         get_string('col_language', 'local_thlevasys'),
-        get_string('col_select', 'local_thlevasys'),
     ];
 
     $rows = \local_thlevasys\request_helper::get_table_rows($categoryid);
     $existing = \local_thlevasys\request_repository::get_requests_for_user((int) $USER->id);
     $rows = (new \local_thlevasys\output\request_table())->enrich_rows_for_sorting($rows, $existing);
+    $rows = array_values(array_filter($rows, static function(\stdClass $row): bool {
+        return !empty($row->selected);
+    }));
     foreach ($rows as $row) {
         $row->langlabel = \local_thlevasys\request_helper::format_language_label($row->lang);
-        $row->selectedlabel = !empty($row->selected) ? get_string('yes') : get_string('no');
     }
     $rows = \local_thlevasys\request_helper::filter_table_rows_by_search($rows, trim($search), [
         'courseid',
@@ -144,7 +146,6 @@ if ($scope === 'request') {
         'participantcount',
         'groupname',
         'langlabel',
-        'selectedlabel',
     ]);
     $rows = \local_thlevasys\request_helper::sort_table_rows($rows, ['coursename' => SORT_ASC]);
 
@@ -165,7 +166,6 @@ if ($scope === 'request') {
                 $row->participantcount,
                 $row->groupname,
                 $langlabel,
-                !empty($row->selected) ? get_string('yes') : get_string('no'),
             ];
         }
     );
