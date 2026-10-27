@@ -49,6 +49,35 @@ class request_repository {
     }
 
     /**
+     * Count all evaluation request records.
+     *
+     * @return int
+     */
+    public static function count_all_requests(): int {
+        global $DB;
+
+        return (int) $DB->count_records('local_thlevasys_requests');
+    }
+
+    /**
+     * Delete all evaluation request records.
+     *
+     * @return int Number of deleted records.
+     */
+    public static function delete_all_requests(): int {
+        global $DB;
+
+        $count = self::count_all_requests();
+        if ($count === 0) {
+            return 0;
+        }
+
+        $DB->delete_records('local_thlevasys_requests');
+
+        return $count;
+    }
+
+    /**
      * Get all requests created within the configured request period.
      *
      * @return \stdClass[] Request records keyed by id.

@@ -47,6 +47,7 @@ class admin_request_table {
         $bounds = \local_thlevasys\access::get_request_period_bounds();
         if ($bounds === null) {
             $html .= $OUTPUT->notification(get_string('error_requestperiodnotconfigured', 'local_thlevasys'), 'warning');
+            $html .= self::render_reset_button($OUTPUT);
             return $html;
         }
 
@@ -63,8 +64,7 @@ class admin_request_table {
         );
 
         $html .= export_options::render();
-
-        $baseurl = new \moodle_url('/local/thlevasys/admin_requests.php');
+        $html .= self::render_reset_button($OUTPUT);        $baseurl = new \moodle_url('/local/thlevasys/admin_requests.php');
         $tablebaseurl = clone $baseurl;
         if ($search !== '') {
             $baseurl->param('search', $search);
@@ -160,11 +160,30 @@ class admin_request_table {
     }
 
     /**
+     * Render the button to reset all evaluation requests.
+     *
+     * @param \core_renderer $output Renderer.
+     * @return string HTML
+     */
+    protected static function render_reset_button(\core_renderer $output): string {
+        $button = new \single_button(
+            new \moodle_url('/local/thlevasys/reset_requests.php'),
+            get_string('reset_requests', 'local_thlevasys'),
+            'get',
+            \single_button::BUTTON_DANGER
+        );
+
+        return \html_writer::div(
+            $output->render($button),
+            'local-thlevasys-reset-requests mb-4'
+        );
+    }
+
+    /**
      * @param \stdClass $row Table row.
      * @return string
      */
-    protected function render_course_link(\stdClass $row): string {
-        return \html_writer::link(
+    protected function render_course_link(\stdClass $row): string {        return \html_writer::link(
             new \moodle_url('/course/view.php', ['id' => $row->courseid]),
             $row->coursename,
             [

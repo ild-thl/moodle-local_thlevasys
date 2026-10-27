@@ -105,6 +105,8 @@ Sortierung nach allen Spalten (Standard: LV-Name aufsteigend), Paginierung mit 1
 
 Oberhalb der Tabelle stehen Export-Einstellungsfelder (Evaluations-Beginn, Rücklauferinnerung, Evaluations-Erinnerung, Evaluations-Ende, Semester, Fragebogen DE/EN). Die Felder werden nicht gespeichert. Rücklauferinnerung und Evaluations-Erinnerung müssen jeweils nach Beginn und vor Ende liegen; ihre Reihenfolge zueinander ist frei. Links neben dem Suchfeld: Button **CSV für Excel** (Tabelleninhalt inkl. aktiver Suche, Semikolon/UTF-8-BOM für Excel) und **EvaSys XML** (Import für EvaSys). Beide sind voneinander unabhängig.
 
+**Beantragungen zurücksetzen:** Button zum Löschen **aller** Beantragungen (mit Bestätigungsseite). Danach können Beauftragte im aktuellen Zeitraum neu beantragen. Sinnvoll vor einem neuen Beantragungszeitraum.
+
 **EvaSys-XML-Export:** Lecture-Inhalt im THL-Muster (`p_o_study`, `coursefield1`–`4`, `Person`). Zeitsteuerung im aktuellen EvaSys-Schema: pro Umfrage eine `SurveyTaskList` mit `OpenSurveyTask`, `InviteParticipantsTask` (Teilnehmende per `ParticipantEmail`, ohne `EmailText` – EvaSys-Vorlagen), `RemindParticipantsTask` und `NotifyResponseRateTask` (Quote 100 %, CalculationMethod 1; Reihenfolge der beiden nach Startzeit) sowie `CloseSurveyTask`.
 
 ### Rolle Evaluationsbeauftragte\*r zuweisen
@@ -137,6 +139,7 @@ local/thlevasys/
 ├── admin_requests.php
 ├── export_evasys.php
 ├── export_csv.php
+├── reset_requests.php
 ├── settings.php
 ├── styles.css
 ├── amd/
