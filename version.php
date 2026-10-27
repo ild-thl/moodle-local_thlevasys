@@ -24,12 +24,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2026083100;
+$plugin->version   = 2026102700;
 $plugin->requires  = 2024100700.00; // Moodle 4.5.
 $plugin->supported = [
     405, // Moodle 4.5 (inclusive lowest).
     502, // Moodle 5.2 (inclusive highest; covers 5.0 and 5.1).
 ];
 $plugin->component = 'local_thlevasys';
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '0.4.0';
+$plugin->maturity  = MATURITY_BETA;
+$plugin->release   = '0.5.0';

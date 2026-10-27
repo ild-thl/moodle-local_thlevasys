@@ -7,6 +7,10 @@ Versionierung: Plugin-`release` sowie Moodle-`version` (`YYYYMMDDXX`).
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-27
+
+Plugin-Version: `2026102700` · Maturity: Beta
+
 ### Hinzugefügt
 
 - CSV-Export des Tabelleninhalts (Admin-Übersicht und Beantragungstabelle) als Excel-taugliche Datei (Semikolon, UTF-8-BOM) über Moodles `csv_export_writer`; unabhängig vom EvaSys-XML-Export
@@ -15,6 +19,7 @@ Versionierung: Plugin-`release` sowie Moodle-`version` (`YYYYMMDDXX`).
 
 ### Geändert
 
+- Maturity von Alpha auf Beta
 - CSV-Export der Beantragungsseite enthält nur zur Beantragung ausgewählte Zeilen (nicht mehr alle angezeigten Kurse)
 - EvaSys-XML: Veranstaltungstyp `<type>` ist jetzt `Vorlesung` (statt `Lehrveranstaltung`)
 - Kursbereichsfilter der Beantragungsseite als durchsuchbares Autocomplete-Feld (wie in den Kurseinstellungen); Tabelle aktualisiert sich unmittelbar nach Auswahl
