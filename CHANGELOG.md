@@ -16,6 +16,7 @@ Versionierung: Plugin-`release` sowie Moodle-`version` (`YYYYMMDDXX`).
 ### Geändert
 
 - CSV-Export der Beantragungsseite enthält nur zur Beantragung ausgewählte Zeilen (nicht mehr alle angezeigten Kurse)
+- EvaSys-XML: Veranstaltungstyp `<type>` ist jetzt `Vorlesung` (statt `Lehrveranstaltung`)
 - Kursbereichsfilter der Beantragungsseite als durchsuchbares Autocomplete-Feld (wie in den Kurseinstellungen); Tabelle aktualisiert sich unmittelbar nach Auswahl
 - EvaSys-XML: Teilnehmende in `InviteParticipantsTask` per `ParticipantEmail` (statt unverbundener `Recipient`-Refs)
 - EvaSys-XML: `EmailText` entfernt (EvaSys-Textvorlagen)
