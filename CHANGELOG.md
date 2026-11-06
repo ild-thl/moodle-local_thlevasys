@@ -7,6 +7,10 @@ Versionierung: Plugin-`release` sowie Moodle-`version` (`YYYYMMDDXX`).
 
 ## [Unreleased]
 
+### Geändert
+
+- Teilnehmerzählung in Beantragungs-/Admin-Tabelle per SQL-`COUNT` (aktive Einschreibung + Rolle `student`) statt User-Listen mit `is_enrolled` pro Person
+
 ## [0.5.0] - 2026-10-27
 
 Plugin-Version: `2026102700` · Maturity: Beta

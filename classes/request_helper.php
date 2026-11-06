@@ -132,9 +132,7 @@ class request_helper {
      * @return array<int, \stdClass>
      */
     public static function get_table_rows(int $filtercategoryid = 0, ?int $userid = null): array {
-        global $DB;
-
-        $editingteacherroleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher']);
+        $editingteacherroleid = self::get_role_id_by_shortname('editingteacher');
         if (!$editingteacherroleid) {
             return [];
         }
@@ -308,12 +306,31 @@ class request_helper {
     /**
      * Count actively enrolled users with the student role.
      *
+     * Uses a SQL COUNT over active enrolments + role assignment (no per-user is_enrolled).
+     *
      * @param \context_course $context Course context.
      * @param int $groupid Optional group id (0 = whole course).
      * @return int
      */
     public static function count_student_participants(\context_course $context, int $groupid = 0): int {
-        return count(self::get_student_participants($context, $groupid));
+        global $DB;
+
+        $studentroleid = self::get_role_id_by_shortname('student');
+        if (!$studentroleid) {
+            return 0;
+        }
+
+        [$esql, $params] = get_enrolled_sql($context, '', $groupid ?: 0, true);
+        $params['thlevasysroleid'] = $studentroleid;
+        $params['thlevasyscontextid'] = $context->id;
+
+        $sql = "SELECT COUNT(1)
+                  FROM ($esql) je
+                  JOIN {role_assignments} ra ON ra.userid = je.id
+                                           AND ra.roleid = :thlevasysroleid
+                                           AND ra.contextid = :thlevasyscontextid";
+
+        return (int) $DB->count_records_sql($sql, $params);
     }
 
     /**
@@ -326,33 +343,43 @@ class request_helper {
     public static function get_student_participants(\context_course $context, int $groupid = 0): array {
         global $DB;
 
-        $studentroleid = $DB->get_field('role', 'id', ['shortname' => 'student']);
+        $studentroleid = self::get_role_id_by_shortname('student');
         if (!$studentroleid) {
             return [];
         }
 
-        $students = get_role_users(
-            $studentroleid,
-            $context,
-            false,
-            'u.id, u.firstname, u.lastname, u.email, u.username',
-            null,
-            true,
-            $groupid ?: ''
-        );
-        if (empty($students)) {
-            return [];
+        [$esql, $params] = get_enrolled_sql($context, '', $groupid ?: 0, true);
+        $params['thlevasysroleid'] = $studentroleid;
+        $params['thlevasyscontextid'] = $context->id;
+
+        $sql = "SELECT u.id, u.firstname, u.lastname, u.email, u.username
+                  FROM {user} u
+                  JOIN ($esql) je ON je.id = u.id
+                  JOIN {role_assignments} ra ON ra.userid = u.id
+                                           AND ra.roleid = :thlevasysroleid
+                                           AND ra.contextid = :thlevasyscontextid
+                 WHERE u.deleted = 0";
+
+        return $DB->get_records_sql($sql, $params);
+    }
+
+    /**
+     * Resolve a role id by shortname (cached for the request).
+     *
+     * @param string $shortname Role shortname.
+     * @return int|null
+     */
+    protected static function get_role_id_by_shortname(string $shortname): ?int {
+        global $DB;
+
+        static $cache = [];
+
+        if (!array_key_exists($shortname, $cache)) {
+            $roleid = $DB->get_field('role', 'id', ['shortname' => $shortname]);
+            $cache[$shortname] = $roleid ? (int) $roleid : null;
         }
 
-        $users = [];
-        foreach ($students as $student) {
-            if (!is_enrolled($context, $student, '', true)) {
-                continue;
-            }
-            $users[(int) $student->id] = $student;
-        }
-
-        return $users;
+        return $cache[$shortname];
     }
 
     /**
