@@ -132,8 +132,7 @@ class request_helper {
      * @return array<int, \stdClass>
      */
     public static function get_table_rows(int $filtercategoryid = 0, ?int $userid = null): array {
-        $editingteacherroleid = self::get_role_id_by_shortname('editingteacher');
-        if (!$editingteacherroleid) {
+        if (!self::get_role_id_by_shortname('editingteacher')) {
             return [];
         }
 
@@ -142,12 +141,10 @@ class request_helper {
 
         foreach ($courses as $course) {
             $coursecontext = \context_course::instance($course->id);
-            $teachers = get_role_users(
-                $editingteacherroleid,
-                $coursecontext,
-                false,
-                'u.id, u.firstname, u.lastname, u.firstnamephonetic, u.lastnamephonetic, u.middlename, u.alternatename'
-            );
+            $teachers = self::get_editing_teachers($coursecontext);
+            if (empty($teachers)) {
+                continue;
+            }
 
             $groups = groups_get_all_groups($course->id);
             // Only the whole-course count here; per-group counts are filled later for
@@ -155,10 +152,6 @@ class request_helper {
             $participantcounts = [0 => self::count_student_participants($coursecontext)];
 
             foreach ($teachers as $teacher) {
-                if (!is_enrolled($coursecontext, $teacher, '', true)) {
-                    continue;
-                }
-
                 $row = new \stdClass();
                 $row->rowkey = $course->id . '_' . $teacher->id;
                 $row->courseid = $course->id;
@@ -174,6 +167,38 @@ class request_helper {
         }
 
         return $rows;
+    }
+
+    /**
+     * Actively enrolled users with the editingteacher role in a course.
+     *
+     * @param \context_course $context Course context.
+     * @return \stdClass[] Users indexed by id (fields needed for fullname()).
+     */
+    public static function get_editing_teachers(\context_course $context): array {
+        global $DB;
+
+        $roleid = self::get_role_id_by_shortname('editingteacher');
+        if (!$roleid) {
+            return [];
+        }
+
+        [$esql, $params] = get_enrolled_sql($context, '', 0, true);
+        $params['thlevasysroleid'] = $roleid;
+        $params['thlevasyscontextid'] = $context->id;
+
+        $userfieldsapi = \core_user\fields::for_name();
+        $nameselects = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
+
+        $sql = "SELECT u.id, {$nameselects}
+                  FROM {user} u
+                  JOIN ($esql) je ON je.id = u.id
+                  JOIN {role_assignments} ra ON ra.userid = u.id
+                                           AND ra.roleid = :thlevasysroleid
+                                           AND ra.contextid = :thlevasyscontextid
+                 WHERE u.deleted = 0";
+
+        return $DB->get_records_sql($sql, $params);
     }
 
     /**
