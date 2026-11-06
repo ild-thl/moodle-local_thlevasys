@@ -135,6 +135,7 @@ if ($scope === 'request') {
     $rows = array_values(array_filter($rows, static function(\stdClass $row): bool {
         return !empty($row->selected);
     }));
+    $rows = \local_thlevasys\request_helper::ensure_participant_counts_for_selected_groups($rows);
     foreach ($rows as $row) {
         $row->langlabel = \local_thlevasys\request_helper::format_language_label($row->lang);
     }

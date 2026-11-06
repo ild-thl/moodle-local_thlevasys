@@ -66,7 +66,7 @@ Nutzer mit der Rolle **Evaluationsbeauftragte\*r** oder **Evaluations-Admin** se
 
 **Sortierung:** Alle Spalten sind sortierbar (Klick auf Spaltenkopf). Gruppe, Sprache und Auswahl werden nach dem aktuellen Beantragungsstand der Zeile sortiert. Die Sortierung bleibt über die Session erhalten.
 
-**Paginierung:** Maximal 10 Einträge pro Seite.
+**Paginierung:** Maximal 10 Einträge pro Seite. Gruppenspezifische LV-TN-Zahlen werden nur für die sichtbare Seite berechnet (Dropdown-Wechsel); beim initialen Tabellenaufbau zählt nur die Gesamt-LV.
 
 **CSV-Export:** Button **CSV für Excel** links neben dem Suchfeld. Exportiert nur die zur Beantragung ausgewählten Zeilen (gesetzte Checkbox), unter Berücksichtigung von Kursbereich-Filter und Suche, als Excel-taugliche CSV (Semikolon, UTF-8-BOM) über Moodles `csv_export_writer`, unabhängig vom EvaSys-XML-Export.
 

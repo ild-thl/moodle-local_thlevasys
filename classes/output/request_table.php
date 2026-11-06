@@ -88,6 +88,7 @@ class request_table {
 
         $existing = \local_thlevasys\request_repository::get_requests_for_user((int) $USER->id);
         $rows = $this->enrich_rows_for_sorting($rows, $existing);
+        $rows = \local_thlevasys\request_helper::ensure_participant_counts_for_selected_groups($rows);
         foreach ($rows as $row) {
             $row->langlabel = \local_thlevasys\request_helper::format_language_label($row->lang);
             $row->selectedlabel = !empty($row->selected) ? get_string('yes') : get_string('no');
@@ -147,6 +148,8 @@ class request_table {
         $rows = \local_thlevasys\request_helper::sort_table_rows($rows, $table->get_sort_columns());
         $table->pagesize(10, count($rows));
         $rows = array_slice($rows, $table->get_page_start(), $table->get_page_size());
+        // Per-group counts only for the visible page (dropdown / data-counts).
+        $rows = \local_thlevasys\request_helper::fill_group_participant_counts($rows);
 
         foreach ($rows as $row) {
             $table->add_data([

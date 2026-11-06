@@ -150,13 +150,9 @@ class request_helper {
             );
 
             $groups = groups_get_all_groups($course->id);
+            // Only the whole-course count here; per-group counts are filled later for
+            // visible table rows (or for selected groups needed for sort/CSV).
             $participantcounts = [0 => self::count_student_participants($coursecontext)];
-            foreach ($groups as $group) {
-                $participantcounts[(int) $group->id] = self::count_student_participants(
-                    $coursecontext,
-                    (int) $group->id
-                );
-            }
 
             foreach ($teachers as $teacher) {
                 if (!is_enrolled($coursecontext, $teacher, '', true)) {
@@ -301,6 +297,94 @@ class request_helper {
         }
 
         return get_string('lang_de_short', 'local_thlevasys');
+    }
+
+    /**
+     * Ensure participant counts exist for each row's currently selected group.
+     *
+     * Used before sorting/search/CSV when only the whole-course count was loaded.
+     *
+     * @param array $rows Table rows (modified in place).
+     * @return array
+     */
+    public static function ensure_participant_counts_for_selected_groups(array $rows): array {
+        $cache = [];
+
+        foreach ($rows as $row) {
+            $groupid = (int) ($row->groupid ?? 0);
+            if ($groupid === 0) {
+                continue;
+            }
+
+            $counts = $row->participantcounts ?? [];
+            if (array_key_exists($groupid, $counts)) {
+                $row->participantcount = (int) $counts[$groupid];
+                continue;
+            }
+
+            $courseid = (int) $row->courseid;
+            $cachekey = $courseid . ':' . $groupid;
+            if (!array_key_exists($cachekey, $cache)) {
+                $cache[$cachekey] = self::count_student_participants(
+                    \context_course::instance($courseid),
+                    $groupid
+                );
+            }
+
+            $row->participantcounts[$groupid] = $cache[$cachekey];
+            $row->participantcount = $cache[$cachekey];
+        }
+
+        return $rows;
+    }
+
+    /**
+     * Fill per-group participant counts for the given rows (typically one table page).
+     *
+     * Counts are computed once per course and shared across teacher rows of that course.
+     *
+     * @param array $rows Table rows (modified in place).
+     * @return array
+     */
+    public static function fill_group_participant_counts(array $rows): array {
+        if (empty($rows)) {
+            return $rows;
+        }
+
+        $bycourse = [];
+        foreach ($rows as $row) {
+            $courseid = (int) $row->courseid;
+            if (isset($bycourse[$courseid])) {
+                continue;
+            }
+            $bycourse[$courseid] = [
+                'groups' => $row->groups ?? [],
+                'counts' => $row->participantcounts ?? [0 => (int) ($row->participantcount ?? 0)],
+            ];
+        }
+
+        foreach ($bycourse as $courseid => $data) {
+            if (empty($data['groups'])) {
+                continue;
+            }
+            $context = \context_course::instance($courseid);
+            foreach ($data['groups'] as $group) {
+                $groupid = (int) $group->id;
+                if (array_key_exists($groupid, $bycourse[$courseid]['counts'])) {
+                    continue;
+                }
+                $bycourse[$courseid]['counts'][$groupid] = self::count_student_participants($context, $groupid);
+            }
+        }
+
+        foreach ($rows as $row) {
+            $courseid = (int) $row->courseid;
+            $row->participantcounts = $bycourse[$courseid]['counts'];
+            $groupid = (int) ($row->groupid ?? 0);
+            $row->participantcount = (int) ($row->participantcounts[$groupid] ?? $row->participantcounts[0] ?? 0);
+        }
+
+        return $rows;
     }
 
     /**

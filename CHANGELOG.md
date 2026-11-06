@@ -10,6 +10,7 @@ Versionierung: Plugin-`release` sowie Moodle-`version` (`YYYYMMDDXX`).
 ### Geändert
 
 - Teilnehmerzählung in Beantragungs-/Admin-Tabelle per SQL-`COUNT` (aktive Einschreibung + Rolle `student`) statt User-Listen mit `is_enrolled` pro Person
+- Gruppenspezifische Teilnehmerzahlen nur noch für die sichtbare Tabellenseite (bzw. gewählte Gruppe bei Sortierung/CSV), nicht mehr für alle Kurse beim Seitenaufbau
 
 ## [0.5.0] - 2026-10-27
 
